@@ -5,19 +5,6 @@
 
 > Bot de alertas no Telegram sobre girl groups de kpop, feito por uma gg stan com pouco tempo para scrollar no twitter. ˚.🎀༘⋆
 
-## Índice
-
-- [O que é](#o-que-é)
-- [O que ele monitora](#o-que-ele-monitora)
-- [Como funciona por baixo dos panos](#como-funciona-por-baixo-dos-panos)
-- [Instalação](#instalação)
-- [Como usar](#como-usar)
-- [Testes](#testes)
-- [Contribuindo](#contribuindo)
-- [Troubleshooting](#troubleshooting)
-- [Roadmap](#roadmap)
-- [Licença](#licença)
-
 ## O que é
 
 `gg-heartbeat` é um bot que fica de olho nos grupos de kpop que você acompanha e te avisa no Telegram assim que sai algo novo: vídeo no YouTube, álbum/single ou notícia. Essa ideia surgiu para resolver um problema bem específico meu, que é não ter mais o mesmo tempo de quando eu era adolescente e podia ficar no twitter acompanhando tudo em tempo real, mas felizmente, hoje em dia, existe o GitHub Actions para fazer isso por mim.
