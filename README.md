@@ -1,10 +1,10 @@
-# gg-heartbeat
+# Sora
 
 > Bot de alertas no Telegram sobre girl groups de kpop, feito por uma gg stan com pouco tempo para scrollar no twitter. ˚.🎀༘⋆
 
 ## O que é
 
-`gg-heartbeat` é um bot que fica de olho nos grupos de kpop que você acompanha e te avisa no Telegram assim que sai algo novo: vídeo no YouTube, álbum/single ou notícia. Essa ideia surgiu para resolver um problema bem específico meu, que é não ter mais o mesmo tempo de quando eu era adolescente e podia ficar no twitter acompanhando tudo em tempo real, mas felizmente, hoje em dia, existe o GitHub Actions para fazer isso por mim.
+A Sora é um bot que fica de olho nos grupos de kpop que você acompanha e te avisa no Telegram assim que sai algo novo: vídeo no YouTube, álbum/single ou notícia. Essa ideia surgiu para resolver um problema bem bobo e específico meu, que é não ter mais o mesmo tempo de quando eu era adolescente e podia ficar no twitter acompanhando tudo em tempo real
 
 Atualmente ele monitora apenas o YouTube, Itunes (álbum/single), Melon (música entrou no Top 100 do chart coreano) e faz a consulta na web para notícias, mas futuramente pretendo adicionar outras plataformas
 
@@ -117,15 +117,13 @@ Um workflow de CI (`.github/workflows/tests.yml`) roda esses testes automaticame
 
 ## Contribuindo
 
-O gg-heartbeat/Sora Bot é um projeto pessoal meu, mas issues e PRs são bem-vindos principalmente pra novas fontes ou correções. ^^
+A Sora é um projeto pessoal simples meu, mas issues e PRs são bem-vindos principalmente pra novas fontes ou correções. ^^
 
 1. Faça um fork e crie uma branch a partir da `main`.
 2. Rode `pip install -r requirements.txt` e confirme que `python3 tests/test_logic.py` passa antes e depois da sua mudança.
 3. Abra o PR descrevendo o que mudou e por quê.
 
 **Pra adicionar uma fonte nova** (ex: um novo serviço de música ou rede social): crie um módulo em `src/sources/` com uma função `check_<fonte>(group, state)` que devolve uma lista de mensagens de texto, seguindo o padrão dos módulos existentes (`youtube.py`, `itunes.py`, `google_news.py`, `melon.py`) — cada fonte é isolada e só precisa ser registrada em `SOURCE_CHECKS`, em `src/main.py`. A seção [Roadmap](#roadmap) tem algumas ideias de fontes que ainda faltam.
-
-Encontrou um bug ou tem uma sugestão? Abra uma [issue](https://github.com/Chiardelli/gg-heartbeat/issues). :3
 
 ## Troubleshooting
 
@@ -138,3 +136,4 @@ Encontrou um bug ou tem uma sugestão? Abra uma [issue](https://github.com/Chiar
 
 - Separar grupos em "prioridade alta" (checagem mais frequente) e "prioridade baixa".
 - Adicionar Genie (outro chart coreano) seguindo o mesmo padrão do `melon.py`.
+- Adicionar o Nitter para consultar as novidades através da TL do Twitter
