@@ -1,8 +1,5 @@
 # gg-heartbeat
 
-[![Checar novidades das idols](https://github.com/Chiardelli/gg-heartbeat/actions/workflows/check-updates.yml/badge.svg)](https://github.com/Chiardelli/gg-heartbeat/actions/workflows/check-updates.yml)
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
-
 > Bot de alertas no Telegram sobre girl groups de kpop, feito por uma gg stan com pouco tempo para scrollar no twitter. ˚.🎀༘⋆
 
 ## O que é
