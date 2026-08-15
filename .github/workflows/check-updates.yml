@@ -1,0 +1,47 @@
+name: Checar novidades das idols
+
+on:
+  schedule:
+    # roda todo início de hora. Ajuste pra "*/30 * * * *" (a cada 30 min)
+    # se quiser mais frequência — veja o README pra notas sobre cota do
+    # GitHub Actions antes de aumentar a frequência num repositório privado.
+    - cron: "0 * * * *"
+  workflow_dispatch: {} # permite rodar manualmente pela aba "Actions" do GitHub
+
+permissions:
+  contents: write # necessário pra commitar o state/seen.json atualizado
+
+concurrency:
+  group: check-updates
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Rodar checagem de novidades
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python src/main.py
+
+      - name: Commitar estado atualizado
+        run: |
+          git config user.name "gg-heartbeat-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/seen.json config/groups_bot.yaml
+          git diff --cached --quiet || git commit -m "chore: atualiza estado de novidades vistas [skip ci]"
+          git push

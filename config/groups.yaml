@@ -1,0 +1,40 @@
+# Configuração dos grupos/idols que o bot vai monitorar.
+#
+# Cada bloco abaixo é um "grupo" (ou pode ser uma idol solo). Todos os campos
+# de fonte são OPCIONAIS — se você não quiser monitorar iTunes pra um grupo,
+# por exemplo, é só remover ou deixar a lista vazia ([]).
+#
+# Veja o README.md para instruções detalhadas de como encontrar cada ID.
+
+groups: []
+
+# Exemplo de bloco (copie e descomente pra adicionar um grupo manualmente
+# aqui — grupos adicionados via /addgroup no Telegram vão em
+# config/groups_bot.yaml e são mesclados automaticamente com esse arquivo):
+#
+# groups:
+#   - name: "Nome Do Grupo"
+#     # IDs de canal do YouTube (começam com "UC..."). Um grupo pode ter mais
+#     # de um canal oficial (ex: canal do grupo + canal da agência).
+#     youtube_channel_ids:
+#       - "UCxxxxxxxxxxxxxxxxxxxxxxx"
+#
+#     # IDs numéricos de artista no iTunes/Apple Music (usados só pra saber a
+#     # data de lançamento de álbum/single — geralmente sai junto no Spotify).
+#     # Pra achar: https://itunes.apple.com/search?term=NOME+DO+GRUPO&entity=musicArtist
+#     # e pegue o campo "artistId" do resultado certo.
+#     itunes_artist_ids:
+#       - "000000000"
+#
+#     # Termo de busca usado no Google News RSS. Capriche pra evitar ruído
+#     # (ex: adicionar "kpop" ajuda a filtrar resultados irrelevantes).
+#     google_news_query: "Nome Do Grupo kpop"
+#
+#     # ID numérico de artista no Melon (opcional). Pra achar: busque o grupo
+#     # em melon.com, abra a página do artista e pegue o número depois de
+#     # "artistId=" na URL.
+#     melon_artist_id: "0000000"
+#
+#     # Pausa esse grupo (para de checar todas as fontes) sem precisar
+#     # remover o bloco. Também dá pra fazer isso por /pausegroup no Telegram.
+#     paused: false
