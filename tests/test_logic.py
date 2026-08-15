@@ -1,0 +1,523 @@
+"""Teste manual (não faz parte do projeto entregue) só pra validar a lógica
+de diff das fontes com dados falsos, sem depender de rede/credenciais reais.
+"""
+import sys
+import os
+import types
+from unittest.mock import patch
+
+import yaml
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from state import load_state, save_state 
+
+
+def test_state_roundtrip(tmp_path):
+    path = str(tmp_path / "seen.json")
+    save_state({"a": {"b": "c"}}, path=path)
+    loaded = load_state(path=path)
+    assert loaded == {"a": {"b": "c"}}
+    print("state roundtrip OK")
+
+
+def test_youtube_no_credentials_returns_empty():
+    from sources.youtube import check_youtube
+    os.environ.pop("YOUTUBE_API_KEY", None)
+    result = check_youtube({"name": "X", "youtube_channel_ids": ["UC123"]}, {})
+    assert result == []
+    print("youtube sem credencial: retorna [] OK")
+
+
+def test_itunes_first_run_no_notification_then_detects_new():
+    from sources import itunes
+
+    group = {"name": "Grupo Teste", "itunes_artist_ids": ["123"]}
+    state = {}
+
+    def make_response(albums):
+        class FakeResp:
+            def raise_for_status(self):
+                pass
+            def json(self):
+                return {"results": [{"wrapperType": "artist"}] + albums}
+        return FakeResp()
+
+    albums_v1 = [
+        {"wrapperType": "collection", "collectionId": 1, "collectionName": "Album 1",
+         "collectionViewUrl": "http://example.com/1", "releaseDate": "2025-01-01T00:00:00Z", "trackCount": 8},
+    ]
+    albums_v2 = albums_v1 + [
+        {"wrapperType": "collection", "collectionId": 2, "collectionName": "Single 2",
+         "collectionViewUrl": "http://example.com/2", "releaseDate": "2025-02-01T00:00:00Z", "trackCount": 2},
+    ]
+
+    with patch.object(itunes.requests, "get", return_value=make_response(albums_v1)):
+        msgs_first = itunes.check_itunes(group, state)
+    assert msgs_first == [], f"esperado nenhuma notificação no primeiro run, veio {msgs_first}"
+
+    with patch.object(itunes.requests, "get", return_value=make_response(albums_v2)):
+        msgs_second = itunes.check_itunes(group, state)
+    assert len(msgs_second) == 1 and "Single 2" in msgs_second[0], f"esperado 1 notificação sobre Single 2, veio {msgs_second}"
+    print("itunes diff logic OK:", msgs_second)
+
+
+def _fake_feed(links):
+    entries = [types.SimpleNamespace(get=(lambda d: (lambda k, default=None: d.get(k, default)))({"link": l, "title": f"Notícia {l}"})) for l in links]
+    # feedparser entries behave like dicts; simulate with plain dicts instead
+    return types.SimpleNamespace(entries=[{"link": l, "title": f"Notícia {l}"} for l in links])
+
+
+def test_google_news_first_run_no_notification_then_detects_new():
+    from sources import google_news
+
+    group = {"name": "Grupo Teste", "google_news_query": "grupo teste kpop"}
+    state = {}
+
+    with patch.object(google_news.feedparser, "parse", return_value=_fake_feed(["u1", "u2", "u3"])):
+        msgs_first = google_news.check_google_news(group, state)
+    assert msgs_first == [], f"esperado nenhuma notificação no primeiro run, veio {msgs_first}"
+
+    # segunda execução: 1 link novo (u4) além dos 3 antigos
+    with patch.object(google_news.feedparser, "parse", return_value=_fake_feed(["u4", "u1", "u2", "u3"])):
+        msgs_second = google_news.check_google_news(group, state)
+    assert len(msgs_second) == 1 and "u4" in msgs_second[0], f"esperado 1 notificação sobre u4, veio {msgs_second}"
+    print("google_news diff logic OK:", msgs_second)
+
+
+def test_telegram_addgroup_command_creates_group():
+    import telegram_commands
+
+    tmp_bot_path = os.path.join(os.path.dirname(__file__), "_tmp_groups_bot.yaml")
+    if os.path.exists(tmp_bot_path):
+        os.remove(tmp_bot_path)
+
+    state = {}
+    update = {"update_id": 42, "message": {"chat": {"id": 999}, "text": "/addgroup Grupo Teste"}}
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {"result": [update]}
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_BOT_TOKEN"] = "fake-token"
+    sent = []
+
+    try:
+        with patch.object(telegram_commands, "GROUPS_BOT_PATH", tmp_bot_path), \
+             patch.object(telegram_commands, "load_config", return_value=[]), \
+             patch.object(telegram_commands, "find_channel_id", return_value="UCabc"), \
+             patch.object(telegram_commands, "find_artist_id", return_value="123"), \
+             patch.object(telegram_commands.requests, "get", return_value=FakeResp()), \
+             patch.object(telegram_commands, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+            telegram_commands.process_telegram_commands(state)
+
+        assert state["telegram"]["last_update_id"] == 42
+        assert len(sent) == 1 and "Grupo Teste" in sent[0], f"esperada 1 confirmação, veio {sent}"
+
+        with open(tmp_bot_path, "r", encoding="utf-8") as f:
+            saved = yaml.safe_load(f)
+        group = saved["groups"][0]
+        assert group["name"] == "Grupo Teste"
+        assert group["youtube_channel_ids"] == ["UCabc"]
+        assert group["itunes_artist_ids"] == ["123"]
+        print("telegram /addgroup command OK:", sent[0].splitlines()[0])
+    finally:
+        if os.path.exists(tmp_bot_path):
+            os.remove(tmp_bot_path)
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_telegram_removegroup_command_deletes_group():
+    import telegram_commands
+
+    tmp_bot_path = os.path.join(os.path.dirname(__file__), "_tmp_groups_bot_remove.yaml")
+    with open(tmp_bot_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump({"groups": [{"name": "Grupo Teste", "youtube_channel_ids": ["UCabc"]}]}, f)
+
+    state = {}
+    update = {"update_id": 7, "message": {"chat": {"id": 999}, "text": "/removegroup Grupo Teste"}}
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {"result": [update]}
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_BOT_TOKEN"] = "fake-token"
+    sent = []
+
+    try:
+        with patch.object(telegram_commands, "GROUPS_BOT_PATH", tmp_bot_path), \
+             patch.object(telegram_commands, "load_config", return_value=[]), \
+             patch.object(telegram_commands.requests, "get", return_value=FakeResp()), \
+             patch.object(telegram_commands, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+            telegram_commands.process_telegram_commands(state)
+
+        assert state["telegram"]["last_update_id"] == 7
+        assert len(sent) == 1 and "removido" in sent[0], f"esperada 1 confirmação de remoção, veio {sent}"
+
+        with open(tmp_bot_path, "r", encoding="utf-8") as f:
+            saved = yaml.safe_load(f)
+        assert saved["groups"] == []
+        print("telegram /removegroup command OK:", sent[0])
+    finally:
+        if os.path.exists(tmp_bot_path):
+            os.remove(tmp_bot_path)
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_telegram_listgroups_command_replies_with_groups():
+    import telegram_commands
+
+    tmp_bot_path = os.path.join(os.path.dirname(__file__), "_tmp_groups_bot_list.yaml")
+    with open(tmp_bot_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump({"groups": [{"name": "Grupo Bot"}]}, f)
+
+    state = {}
+    update = {"update_id": 9, "message": {"chat": {"id": 999}, "text": "/listgroups"}}
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {"result": [update]}
+
+    merged_groups = [{"name": "Grupo Manual"}, {"name": "Grupo Bot"}]
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_BOT_TOKEN"] = "fake-token"
+    sent = []
+
+    try:
+        with patch.object(telegram_commands, "GROUPS_BOT_PATH", tmp_bot_path), \
+             patch.object(telegram_commands, "load_config", return_value=merged_groups), \
+             patch.object(telegram_commands.requests, "get", return_value=FakeResp()), \
+             patch.object(telegram_commands, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+            telegram_commands.process_telegram_commands(state)
+
+        assert state["telegram"]["last_update_id"] == 9
+        assert len(sent) == 1, f"esperada 1 resposta, veio {sent}"
+        assert "Grupo Manual" in sent[0] and "manual" in sent[0]
+        assert "Grupo Bot" in sent[0] and "/addgroup" in sent[0]
+        print("telegram /listgroups command OK:", sent[0].splitlines()[0])
+    finally:
+        if os.path.exists(tmp_bot_path):
+            os.remove(tmp_bot_path)
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_telegram_help_command_replies_with_help_text():
+    import telegram_commands
+
+    state = {}
+    update = {"update_id": 11, "message": {"chat": {"id": 999}, "text": "/help"}}
+
+    class FakeResp:
+        def raise_for_status(self):
+            pass
+        def json(self):
+            return {"result": [update]}
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_BOT_TOKEN"] = "fake-token"
+    sent = []
+
+    try:
+        with patch.object(telegram_commands.requests, "get", return_value=FakeResp()), \
+             patch.object(telegram_commands, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+            telegram_commands.process_telegram_commands(state)
+
+        assert state["telegram"]["last_update_id"] == 11
+        assert len(sent) == 1 and "/addgroup" in sent[0] and "/pausegroup" in sent[0]
+        print("telegram /help command OK")
+    finally:
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_telegram_pausegroup_and_resumegroup_commands():
+    import telegram_commands
+
+    tmp_bot_path = os.path.join(os.path.dirname(__file__), "_tmp_groups_bot_pause.yaml")
+    with open(tmp_bot_path, "w", encoding="utf-8") as f:
+        yaml.safe_dump({"groups": [{"name": "Grupo Teste"}]}, f)
+
+    def make_resp(update_id, text):
+        update = {"update_id": update_id, "message": {"chat": {"id": 999}, "text": text}}
+
+        class FakeResp:
+            def raise_for_status(self):
+                pass
+            def json(self):
+                return {"result": [update]}
+        return FakeResp()
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_BOT_TOKEN"] = "fake-token"
+    sent = []
+    state = {}
+
+    try:
+        with patch.object(telegram_commands, "GROUPS_BOT_PATH", tmp_bot_path), \
+             patch.object(telegram_commands, "load_config", return_value=[{"name": "Grupo Teste"}]), \
+             patch.object(telegram_commands, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+
+            with patch.object(telegram_commands.requests, "get", return_value=make_resp(1, "/pausegroup Grupo Teste")):
+                telegram_commands.process_telegram_commands(state)
+            assert len(sent) == 1 and "pausado" in sent[0], f"esperado 'pausado', veio {sent}"
+
+            with open(tmp_bot_path, "r", encoding="utf-8") as f:
+                saved = yaml.safe_load(f)
+            assert saved["groups"][0]["paused"] is True
+
+            with patch.object(telegram_commands.requests, "get", return_value=make_resp(2, "/resumegroup Grupo Teste")):
+                telegram_commands.process_telegram_commands(state)
+            assert len(sent) == 2 and "reativado" in sent[1], f"esperado 'reativado', veio {sent}"
+
+            with open(tmp_bot_path, "r", encoding="utf-8") as f:
+                saved = yaml.safe_load(f)
+            assert saved["groups"][0]["paused"] is False
+
+        print("telegram /pausegroup + /resumegroup OK:", sent)
+    finally:
+        if os.path.exists(tmp_bot_path):
+            os.remove(tmp_bot_path)
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_google_news_dedup_similar_titles():
+    from sources import google_news
+
+    group = {"name": "Grupo Teste", "google_news_query": "grupo teste kpop"}
+    state = {"google_news": {"Grupo Teste": ["u1"]}}
+
+    entries = [
+        {"link": "u3", "title": "Grupo Teste anuncia nova turnê mundial para 2026"},
+        {"link": "u2", "title": "Grupo Teste confirma nova turnê mundial para 2026"},
+    ]
+    feed = types.SimpleNamespace(entries=entries)
+
+    with patch.object(google_news.feedparser, "parse", return_value=feed):
+        msgs = google_news.check_google_news(group, state)
+
+    assert len(msgs) == 1, f"esperada 1 notificação (títulos quase iguais deduplicados), veio {msgs}"
+    print("google_news title dedup OK:", msgs)
+
+
+def _fake_melon_html(rows):
+    parts = []
+    for song_id, rank, artist_id, title in rows:
+        parts.append(
+            f'<tr data-song-no="{song_id}">'
+            f'<td><span class="rank ">{rank}</span></td>'
+            f'<td><a title="{title} 재생">{title}</a></td>'
+            f'<td><a href="/artist/detail.htm?artistId={artist_id}" title="Artist - 페이지 이동">Artist</a></td>'
+            f"</tr>"
+        )
+    return "".join(parts)
+
+
+def test_melon_first_run_then_new_chart_entry():
+    from sources import melon
+
+    group = {"name": "Grupo Teste", "melon_artist_id": "123"}
+    state = {}
+
+    rows_v1 = [("1001", 5, "123", "Song A")]
+    rows_v2 = rows_v1 + [("1002", 10, "123", "Song B")]
+
+    class FakeResp:
+        def __init__(self, html):
+            self.text = html
+        def raise_for_status(self):
+            pass
+
+    with patch.object(melon.requests, "get", return_value=FakeResp(_fake_melon_html(rows_v1))):
+        msgs_first = melon.check_melon(group, state)
+    assert msgs_first == [], f"esperado nenhuma notificação no primeiro run, veio {msgs_first}"
+
+    with patch.object(melon.requests, "get", return_value=FakeResp(_fake_melon_html(rows_v2))):
+        msgs_second = melon.check_melon(group, state)
+    assert len(msgs_second) == 1 and "Song B" in msgs_second[0], f"esperado 1 notificação sobre Song B, veio {msgs_second}"
+    print("melon diff logic OK:", msgs_second)
+
+
+def test_main_alerts_after_repeated_source_failures():
+    import main as main_module
+
+    def failing_check(group, state):
+        raise RuntimeError("boom")
+
+    group = {"name": "Grupo Teste"}
+    state = {}
+    sent = []
+
+    with patch.object(main_module, "load_config", return_value=[group]), \
+         patch.object(main_module, "load_state", return_value=state), \
+         patch.object(main_module, "save_state", lambda s: None), \
+         patch.object(main_module, "process_telegram_commands", lambda s: None), \
+         patch.object(main_module, "SOURCE_CHECKS", [failing_check]), \
+         patch.object(main_module, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+        for _ in range(main_module.FAILURE_ALERT_THRESHOLD):
+            main_module.main()
+
+    assert len(sent) == 1, f"esperado 1 alerta após {main_module.FAILURE_ALERT_THRESHOLD} falhas seguidas, veio {sent}"
+    assert "falhando" in sent[0]
+    print("main failure alert OK:", sent[0])
+
+
+def test_main_tracks_weekly_counts():
+    import main as main_module
+
+    def ok_check(group, state):
+        return ["novidade 1", "novidade 2"]
+
+    group = {"name": "Grupo Teste"}
+    state = {}
+
+    with patch.object(main_module, "load_config", return_value=[group]), \
+         patch.object(main_module, "load_state", return_value=state), \
+         patch.object(main_module, "save_state", lambda s: None), \
+         patch.object(main_module, "process_telegram_commands", lambda s: None), \
+         patch.object(main_module, "SOURCE_CHECKS", [ok_check]), \
+         patch.object(main_module, "send_telegram_message", lambda *a, **kw: None):
+        main_module.main()
+
+    assert state["weekly_counts"]["Grupo Teste"]["ok_check"] == 2
+    print("main weekly_counts tracking OK:", state["weekly_counts"])
+
+
+def test_main_skips_paused_group():
+    import main as main_module
+
+    calls = []
+
+    def tracking_check(group, state):
+        calls.append(group["name"])
+        return []
+
+    groups = [{"name": "Grupo Pausado", "paused": True}, {"name": "Grupo Ativo"}]
+
+    with patch.object(main_module, "load_config", return_value=groups), \
+         patch.object(main_module, "load_state", return_value={}), \
+         patch.object(main_module, "save_state", lambda s: None), \
+         patch.object(main_module, "process_telegram_commands", lambda s: None), \
+         patch.object(main_module, "SOURCE_CHECKS", [tracking_check]), \
+         patch.object(main_module, "send_telegram_message", lambda *a, **kw: None):
+        main_module.main()
+
+    assert calls == ["Grupo Ativo"], f"esperado só o grupo ativo, veio {calls}"
+    print("main paused-group skip OK")
+
+
+def test_weekly_digest_builds_summary_and_resets():
+    import weekly_digest
+
+    state = {"weekly_counts": {"Grupo Teste": {"check_youtube": 2, "check_itunes": 1}}}
+    sent = []
+
+    with patch.object(weekly_digest, "load_state", return_value=state), \
+         patch.object(weekly_digest, "save_state", lambda s: None), \
+         patch.object(weekly_digest, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+        weekly_digest.main()
+
+    assert len(sent) == 1 and "Grupo Teste" in sent[0] and "YouTube" in sent[0], f"resumo inesperado: {sent}"
+    assert state["weekly_counts"] == {}
+    print("weekly digest OK:", sent[0])
+
+
+def test_weekly_digest_skips_send_when_no_counts():
+    import weekly_digest
+
+    state = {"weekly_counts": {}}
+    sent = []
+
+    with patch.object(weekly_digest, "load_state", return_value=state), \
+         patch.object(weekly_digest, "save_state", lambda s: None), \
+         patch.object(weekly_digest, "send_telegram_message", side_effect=lambda text, **kw: sent.append(text)):
+        weekly_digest.main()
+
+    assert sent == [], f"esperado nenhum envio sem novidades na semana, veio {sent}"
+    print("weekly digest sem novidades: não envia OK")
+
+
+def test_youtube_diff_logic_with_mock_client():
+    from sources import youtube
+
+    group = {"name": "Grupo Teste", "youtube_channel_ids": ["UC1"]}
+    state = {}
+
+    def make_client(video_ids):
+        client = types.SimpleNamespace()
+
+        class Channels:
+            def list(self, part, id):
+                class Req:
+                    def execute(self_inner):
+                        return {"items": [{"contentDetails": {"relatedPlaylists": {"uploads": "PL1"}}}]}
+                return Req()
+
+        class PlaylistItems:
+            def list(self, part, playlistId, maxResults):
+                class Req:
+                    def execute(self_inner):
+                        # API retorna do mais novo pro mais antigo
+                        items = [
+                            {"snippet": {"title": f"Video {vid}", "resourceId": {"videoId": vid}}}
+                            for vid in reversed(video_ids)
+                        ]
+                        return {"items": items}
+                return Req()
+
+        client.channels = lambda: Channels()
+        client.playlistItems = lambda: PlaylistItems()
+        return client
+
+    os.environ["YOUTUBE_API_KEY"] = "fake-key-for-test"
+    youtube._youtube_client = make_client(["v1", "v2", "v3"])
+    msgs_first = youtube.check_youtube(group, state)
+    assert msgs_first == [], f"esperado nenhuma notificação no primeiro run, veio {msgs_first}"
+
+    youtube._youtube_client = make_client(["v1", "v2", "v3", "v4"])
+    msgs_second = youtube.check_youtube(group, state)
+    assert len(msgs_second) == 1 and "v4" in msgs_second[0], f"esperado 1 notificação sobre v4, veio {msgs_second}"
+    print("youtube diff logic OK:", msgs_second)
+
+    youtube._youtube_client = None
+    os.environ.pop("YOUTUBE_API_KEY", None)
+
+
+if __name__ == "__main__":
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        class P:
+            def __init__(self, base):
+                self.base = base
+            def __truediv__(self, other):
+                return os.path.join(self.base, other)
+        test_state_roundtrip(P(d))
+    test_youtube_no_credentials_returns_empty()
+    test_itunes_first_run_no_notification_then_detects_new()
+    test_google_news_first_run_no_notification_then_detects_new()
+    test_telegram_addgroup_command_creates_group()
+    test_telegram_removegroup_command_deletes_group()
+    test_telegram_listgroups_command_replies_with_groups()
+    test_telegram_help_command_replies_with_help_text()
+    test_telegram_pausegroup_and_resumegroup_commands()
+    test_google_news_dedup_similar_titles()
+    test_melon_first_run_then_new_chart_entry()
+    test_main_alerts_after_repeated_source_failures()
+    test_main_tracks_weekly_counts()
+    test_main_skips_paused_group()
+    test_weekly_digest_builds_summary_and_resets()
+    test_weekly_digest_skips_send_when_no_counts()
+    test_youtube_diff_logic_with_mock_client()
+    print("\nTODOS OS TESTES PASSARAM")
