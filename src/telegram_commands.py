@@ -10,6 +10,7 @@ Telegram, sem esperar o próximo cron.
 """
 import os
 import re
+from datetime import datetime, timezone
 
 import requests
 import yaml
@@ -18,6 +19,8 @@ from config import load_config
 from sources.itunes import find_artist_id
 from sources.youtube import find_channel_id
 from telegram_notify import send_telegram_message
+from state import load_state as load_full_state
+from ai import generate_text, is_enabled
 
 TELEGRAM_API_BASE = "https://api.telegram.org"
 GROUPS_BOT_PATH = "config/groups_bot.yaml"
@@ -28,6 +31,8 @@ REMOVE_GROUP_RE = re.compile(r"^/removegroup(?:@\w+)?\s+(.+)$", re.IGNORECASE)
 PAUSE_GROUP_RE = re.compile(r"^/pausegroup(?:@\w+)?\s+(.+)$", re.IGNORECASE)
 RESUME_GROUP_RE = re.compile(r"^/resumegroup(?:@\w+)?\s+(.+)$", re.IGNORECASE)
 LIST_GROUPS_RE = re.compile(r"^/listgroups(?:@\w+)?\s*$", re.IGNORECASE)
+RECOMMEND_RE = re.compile(r"^/recommend(?:@\w+)?\s*$", re.IGNORECASE)
+ASK_RE = re.compile(r"^/ask(?:@\w+)?\s+(.+)$", re.IGNORECASE)
 HELP_RE = re.compile(r"^/(help|start)(?:@\w+)?\s*$", re.IGNORECASE)
 
 HELP_TEXT = (
@@ -37,6 +42,8 @@ HELP_TEXT = (
     "/pausegroup Nome Do Grupo - pausa as notificações de um grupo sem removê-lo\n"
     "/resumegroup Nome Do Grupo - reativa as notificações de um grupo pausado\n"
     "/listgroups - lista os grupos configurados\n"
+    "/recommend - sugere grupos/músicas parecidos com os que você acompanha (requer IA configurada)\n"
+    "/ask sua pergunta - responde com base nas novidades recentes (requer IA configurada)\n"
     "/help - mostra essa mensagem"
 )
 
@@ -151,9 +158,68 @@ def _list_groups():
     return f"{len(groups)} grupo(s) configurado(s):\n" + "\n".join(lines)
 
 
+def _recommend():
+    if not is_enabled():
+        return (
+            "Recomendações por IA não estão configuradas. Defina a variável "
+            "GEMINI_API_KEY (veja o README) pra habilitar o /recommend."
+        )
+
+    names = [g.get("name") for g in load_config() if g.get("name") and not g.get("paused")]
+    if not names:
+        return "Nenhum grupo configurado ainda pra eu me basear nas recomendações."
+
+    prompt = (
+        "Você é a Sora, bot de recomendações de kpop pra uma pessoa que "
+        f"acompanha esses grupos: {', '.join(names)}. Sugira de 3 a 5 grupos "
+        "ou solos de kpop parecidos que essa pessoa provavelmente vai "
+        "gostar (evite repetir os que ela já acompanha), e pra cada um cite "
+        "uma música específica pra começar a ouvir e um motivo curto da "
+        "recomendação. Responda em português do Brasil, em formato de lista "
+        "curta, sem introdução longa. Recomende também grupos novos que essa "
+        "pessoa possa gostar, podem ser novos debuts ou grupos já estabelecidos."
+    )
+    text = generate_text(prompt, temperature=0.8)
+    return text or "Não consegui gerar recomendações agora, tenta de novo mais tarde."
+
+
+def _ask(question):
+    if not is_enabled():
+        return (
+            "Perguntas por IA não estão configuradas. Defina a variável "
+            "GEMINI_API_KEY (veja o README) pra habilitar o /ask."
+        )
+
+    log = load_full_state().get("activity_log") or []
+    if not log:
+        return "Ainda não tenho novidades recentes registradas pra responder isso."
+
+    entries = sorted(log, key=lambda e: e.get("ts", 0))
+    lines = []
+    for entry in entries:
+        ts = entry.get("ts")
+        when = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%d/%m") if ts else "??/??"
+        lines.append(f"[{when}] {entry.get('text', '')}")
+    history = "\n\n".join(lines)
+
+    prompt = (
+        "Você é a Sora, bot de alertas de kpop no Telegram. Abaixo está o "
+        "histórico recente de novidades que você já notificou (data no "
+        "formato dd/mm, seguida do conteúdo da notificação). Responda a "
+        "pergunta do usuário usando SOMENTE essas informações, se não "
+        "tiver dado suficiente pra responder, diga isso claramente em vez "
+        "de inventar. Responda em português do Brasil, direto ao ponto.\n\n"
+        f"Histórico:\n{history}\n\nPergunta: {question}"
+    )
+    answer = generate_text(prompt, temperature=0.3)
+    return answer or "Não consegui responder agora, tenta de novo mais tarde."
+
+
 COMMANDS = [
     (HELP_RE, lambda m: HELP_TEXT),
     (LIST_GROUPS_RE, lambda m: _list_groups()),
+    (RECOMMEND_RE, lambda m: _recommend()),
+    (ASK_RE, lambda m: _ask(m.group(1).strip())),
     (ADD_GROUP_RE, lambda m: _add_group(m.group(1).strip())),
     (REMOVE_GROUP_RE, lambda m: _remove_group(m.group(1).strip())),
     (PAUSE_GROUP_RE, lambda m: _set_paused(m.group(1).strip(), True)),
