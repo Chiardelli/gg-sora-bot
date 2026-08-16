@@ -27,6 +27,16 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements.txt
 
+      - name: Restaurar dados privados do cache (grupos + state)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            config/groups_bot.yaml
+            state/seen.json
+          key: sora-dados-privados-${{ github.run_id }}
+          restore-keys: |
+            sora-dados-privados-
+
       - name: Processar o comando
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -36,6 +46,16 @@ jobs:
           TELEGRAM_UPDATE_JSON: ${{ toJson(github.event.client_payload) }}
         run: python src/process_webhook_update.py
 
+      - name: Salvar dados privados atualizados no cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            config/groups_bot.yaml
+            state/seen.json
+          key: sora-dados-privados-${{ github.run_id }}
+
+      # FASE 1 da migração pra cache privado: commit antigo mantido por
+      # enquanto até confirmar que o cache está semeado. Remover depois.
       - name: Commitar grupos atualizados
         run: |
           git config user.name "gg-heartbeat-bot"
