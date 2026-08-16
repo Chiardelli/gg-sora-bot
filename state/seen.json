@@ -99,9 +99,40 @@
       "group": "TWICE",
       "text": "*TWICE* na mídia:\nChaeyoung, do Twice, deixa JYP Entertainment e anuncia projeto solo | Diário do Grande ABC - Notícias e informações - Diário do Grande ABC\nhttps://news.google.com/rss/articles/CBMiqgFBVV95cUxNSG9vbXg4c09zNmxZZ1FpTmpXbjZOaHZyQzRrMnhSalluTzV2MlNBRUxTVi14SXFDMGMzX3FJRHFXV29HZXVyeXcxYXh1OXdLUEYwM2lyZVNnZkNzWTJXSmVyYkp3M0xOQUNEUXNwTl9kLThKNkJCdlROSnBRdE9ubUpwOGxqV0ZoVC1BRXE5NGxaM0JKM2dsdUZWUmcwR1pxZHZVVmRTUnBUQQ?oc=5",
       "ts": 1786911229.985871
+    },
+    {
+      "group": "IVE",
+      "text": "*IVE* na mídia (tradução automática):\nIVE 아이브 캐리비안 베이 FULL VER. (BANG BANG, XOXZ, Kitch, REBEL HEART, I AM)｜Caribbean Bay 260816 - youtu.be\nhttps://news.google.com/rss/articles/CBMiXEFVX3lxTE5qbXM4WEYtVU8yS3lyZkdoZ3VSZnRhbVB4VFlaTWNEa2FqRHRmSGN3MmhfYVR0Y2lBOHJQcWxTcmZZUFFzUXl1QXhTY2RkWXVPMG1hUE91eVJrQ0Ey?oc=5",
+      "ts": 1786912713.7860265
+    },
+    {
+      "group": "TWICE",
+      "text": "*TWICE* na mídia (tradução automática):\n【Hallyu】TWICE Chaeyoung não renova contrato com a JYP, mas continuará atividades com o grupo (Nikkan Sports) - Yahoo! News\nhttps://news.google.com/rss/articles/CBMif0FVX3lxTE1KeWhrd01fT3IwbEttUFpHOUtpeldQa24tcnMzc293UElOQm5XTkZOdjNsY0tHRldaSWNWck52c3l1TjFibExkbWEtZnNMMFl3cERqb2F5b0g4M2lseldhZ2NHZ1JjNFA3VEVXdy1LbTdoQTI2UmdNbm5sSXIyaGM?oc=5",
+      "ts": 1786912723.4583802
     }
   ],
-  "ai_cache": {},
+  "ai_cache": {
+    "11ea9cfe68fd3434025ff640": {
+      "ts": 1786912722.8320801,
+      "value": [
+        0
+      ]
+    },
+    "269a58d2840cbe197369f7bf": {
+      "ts": 1786912723.458292,
+      "value": "【Hallyu】TWICE Chaeyoung não renova contrato com a JYP, mas continuará atividades com o grupo (Nikkan Sports) - Yahoo! News"
+    },
+    "27de14d66e019c593a73ee3b": {
+      "ts": 1786912713.7859788,
+      "value": "IVE 아이브 캐리비안 베이 FULL VER. (BANG BANG, XOXZ, Kitch, REBEL HEART, I AM)｜Caribbean Bay 260816 - youtu.be"
+    },
+    "5558284b3fdfcb1bb240b38a": {
+      "ts": 1786912713.3052564,
+      "value": [
+        0
+      ]
+    }
+  },
   "google_news": {
     "BLACKPINK": [
       "https://news.google.com/rss/articles/CBMi4AFBVV95cUxNN1FBVVI4M204NVdsMHJVVG1KOG5zaDg3cEoycHVOUTZlN1NIX294aHdzVUpsRTR0Uk50Yk1ZMy01TlVvTHR1Z1Q4cU1GQVhGY1dHMUNsaWUtbW90MFg4YkpoU0FFLUppTHlwemhyblVDaU0zUTFkM3BPZ2VCQXI3QzdxRk5pbWhZQ2FLN2M1U1ZZTDBwUzE3ZHhCbjRCMUJzNWR3YmtIX29EM0QwN0UycGtyZmdiWTczTjliZnBuaWRCTzBrXzFFYmpPMkp1aTJrTUNFYXduaVB2dV83czBTMA?oc=5",
@@ -146,6 +177,7 @@
       "https://news.google.com/rss/articles/CBMikwJBVV95cUxOUWtEQzVydHhseHZyWllNay1tdm1lbzZGWWsxdTZ4V291VGwzaWFDYk9FbFZNd09vc21NRlpnQ3NuSUtva0tLNnI5dS1uVFBrVmQxcnZfS1JoY3hCcDJQcng2UjFwaXRoVFJYQnhjLUliMjQ1WlYzVmN1MkdkT0M3c1YzZVNKQWFtZlFsbmxhVGdQVUk3d1NuYXhvYktVWUROUWE0LVpIU3VLcnpUbXdILTVnMlFnU2E3aElBekotTlJKSnhhTXF3Rk9USVQ3ei1BRkU1WHh2cnVuTXF3RlRmOEJUVHNLNHMxd1ZyN3VPQVByYU9UMjh4cnA5V29UWmtpVkFsU1p2T00tS3ZnS3h3QlQ0cw?oc=5"
     ],
     "IVE": [
+      "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5qbXM4WEYtVU8yS3lyZkdoZ3VSZnRhbVB4VFlaTWNEa2FqRHRmSGN3MmhfYVR0Y2lBOHJQcWxTcmZZUFFzUXl1QXhTY2RkWXVPMG1hUE91eVJrQ0Ey?oc=5",
       "https://news.google.com/rss/articles/CBMiW0FVX3lxTE51MHVNOGJFN0YzMFM0ako3SjlEaWVBRHFLb3BfQXZuQUJQbmN1VWRrTU5GT01aSXFXNG92cEVVUnVtWGhib2J6bzY5UUsxWjJSVzNnU21BV3dRS0E?oc=5",
       "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBxMjRHN09JQTRkX19fMlQzdlZ5V09uVlhGT0JsV1lmQkN1ejRKYnZhRFRENzlUaEYtck01RjNoMk1FVTdKV09yX19VRnRfMTk1amVYVUMtNTZUbTM1?oc=5",
       "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQREl6SEZzb0dvZjUzSmI4ZDc0OWotOVhuVEVpSk9kNHQ4M2lONWpQV3BFZVdyVklrLWE2SUdpRDkyUS1ETEpwUlBaTEYzdnBBdkZ1WTZMVnBjWEE5WDdJQ1lHNUZIQVBDMmNGd2UxaDJGYnVFb1llN1R2SXk5aC11YmpWT2J0MEQ5THNpT1ZFdlJZdXU4ZlVwYnFlQVdhVjBqNnczcUh6aDdveTNDNllqXzB0WkNLS2Rmckd3OFU5MG9RbjFVVVppUTdMb1FNUVppem81Yg?oc=5",
@@ -229,20 +261,22 @@
       "https://news.google.com/rss/articles/CBMifkFVX3lxTFBvS0J2el9pN3pGS1plVi1LTXdZel9VLWl4OE1oUmJ1ZGVIZl85a1RtVkRBZ0g0SWdLY1o3cUFxSXNUeUotYXFtMk1ldThtUnFaWXNpeDdWRHlDWTRWbDlKQ1FOX0pOTG8wVzNqbHJKU2k5UnVjSXl1WkhDc2ZjZw?oc=5",
       "https://news.google.com/rss/articles/CBMidkFVX3lxTFBDMEh5ZGdIZ192cGdPTUhTc0tGSDVKT0Nrc3ZuWVdWc0RfeWF5bVhDU3hwYnZ3Q1AwM1lPaGlsU05RMlI3OThaUE1mcFoydVZXVkQ3Ujc5VC1CZTJoZDV3dGZKWExaZ3VpLW44SFNHTjBYUzRXWXc?oc=5"
     ],
+    "STAYC": [],
     "TWICE": [
       "https://news.google.com/rss/articles/CBMixwFBVV95cUxOUjJYVHFIZDVSNDRFcG50QkFjMnNzTU9zeDgwZXkwNUo0ZFA2UGpYcFo0VmZXdEtSSzM4UzNIRGNNOUtqSi1vZ1MxUWx0eHhHVnAxbkJCdlV3RFdUN1psS1F5SDBaeXc5dDJPeUpheE5SVl9CajhRVi1mTTA3X2ZmYTlxaGZhVmxvQXI4Z3cwLXlEUVNkRFU4QV80YS1Fd1JzZEpBOGVqZ3cyVWVTckkyWE5vb1ZYQ1lmYzREWjZmTnJ5aEo1ajdV?oc=5",
       "https://news.google.com/rss/articles/CBMiqgFBVV95cUxNSG9vbXg4c09zNmxZZ1FpTmpXbjZOaHZyQzRrMnhSalluTzV2MlNBRUxTVi14SXFDMGMzX3FJRHFXV29HZXVyeXcxYXh1OXdLUEYwM2lyZVNnZkNzWTJXSmVyYkp3M0xOQUNEUXNwTl9kLThKNkJCdlROSnBRdE9ubUpwOGxqV0ZoVC1BRXE5NGxaM0JKM2dsdUZWUmcwR1pxZHZVVmRTUnBUQQ?oc=5",
       "https://news.google.com/rss/articles/CBMiWkFVX3lxTE5fcERjaUpwVll5VVVBd1V1VE0zNjVrVlhVeFpNT0xaWVZlaWNnSGtQRm1Wd3l1N0xfenJQd2Z6bXYzTF9kN1VFemdHMl9ROGlGZGU4TmczTUVVZw?oc=5",
-      "https://news.google.com/rss/articles/CBMid0FVX3lxTFBVdEhqSVJJc3RaSGJXdUQ0d21DRTZmdGtlUkRaRzF4ZXNnMWx3TGYzcHpGbXU1Zl92b0dtbTVETDNEOGExRUtjdkRUT19Ja0FiLVl2X1VfR0wtMkp6Z2lkTlpMUDEtdndkdl9MckpPYzJaS0RYTUtB0gF_QVVfeXFMUER5SEJXR3V5U2hjUGhUU2VwNEtzbjlsbWoxZGk0UzU0eGpjS3BKcXYxZXRsZHF1a3lZTVdSNWdJbzFyNC1acmE2MS1WQ0t2YmVZZUJ6dzBCRmhBVEotQkkzNFlONTNtdE1UN0hBYzRjYmpTWlkzeE5lVWwta2owaw?oc=5",
-      "https://news.google.com/rss/articles/CBMif0FVX3lxTFBNN3U4SlNlWHNmWG15MTA1SHEyY0R1NlBEcDRsRkE5WC14UFRBZENlQWc4M2VXZHFQbk5FQ1ducmlJRmNRS1hqZUlGRWZrT1B6Y2M2eFN4dXVVeDBEWFBUYnZZWjFJelU1cXBLSV9keGVvY3dkMVdvLVp2eUJXTGM?oc=5",
+      "https://news.google.com/rss/articles/CBMif0FVX3lxTE1KeWhrd01fT3IwbEttUFpHOUtpeldQa24tcnMzc293UElOQm5XTkZOdjNsY0tHRldaSWNWck52c3l1TjFibExkbWEtZnNMMFl3cERqb2F5b0g4M2lseldhZ2NHZ1JjNFA3VEVXdy1LbTdoQTI2UmdNbm5sSXIyaGM?oc=5",
       "https://news.google.com/rss/articles/CBMingFBVV95cUxQLVZzYzE0Ykx0LVg3eUFwd0hWeEYwelI0UmluLXBwNExRSkF1eVhUdjZ4VUY1eUxVMGhma2oxZGZKaTc4ZXlmbTNwM0ZzbzMtZ1kzS0oxMjNidGhuNUdwRmVORHVjNW5LSDJjcHEzbG5wdVJlRC02RXFMYW5OWTFHTV9tQ3VGZVZ1SDczcHl1bWRIcG5uWDduTTdPbWtmUdIBmgFBVV95cUxNbVU0R0F2WE56Z3pqYXRhTF9BU2xiWS1SYVF6d2lPbXc1TGlobm5WM0ZpZW1DdS11ZkFwTnVvdTRZaXdSaVVNSlVUdXlqRFBVRDNLb3dOLTJjSzd2OEsyVy01VzRfdnd6emlhd3N2UXc2V2ZJY2FtTXoyRXR2elVrb29QcGlhbU5WbmdNcmw4WFJiVzRBQV9femtn?oc=5",
       "https://news.google.com/rss/articles/CBMibkFVX3lxTFB3cWJFbDdkTkRkUEZpOTQ5ZzZCSy1ialowU2hfUzFFTHFuTlIwbUIwd2VDbWlaS2VETm9hQlE2OTVfWDc5eFRUUHluQndjT0tuSmFYeXczQzVNV2RROXgxejlVSkJfQlFEUTFDVG5B?oc=5",
       "https://news.google.com/rss/articles/CBMiXEFVX3lxTFBkRFVzOFF3UzIyNkdYSExqUzl1YUNoMTdmLVpxQWNxRXhidlR2akRTYy1maFplQlN6UXU3TGNTSmdEMHdpMUlvcnFPdktxT2M5TTduUVp3QWlQb0hn?oc=5",
+      "https://news.google.com/rss/articles/CBMif0FVX3lxTFBNN3U4SlNlWHNmWG15MTA1SHEyY0R1NlBEcDRsRkE5WC14UFRBZENlQWc4M2VXZHFQbk5FQ1ducmlJRmNRS1hqZUlGRWZrT1B6Y2M2eFN4dXVVeDBEWFBUYnZZWjFJelU1cXBLSV9keGVvY3dkMVdvLVp2eUJXTGM?oc=5",
       "https://news.google.com/rss/articles/CBMi1AJBVV95cUxQNThMYllvNVM3a19rb3h1eUJRdGtwSmFPMndjQzFtUE5wb0lZMHM1RlBuTzJ6NjFuWk51ZzNvWmxtX2RJb0FCY2toeWl5M2pQalB3ZHdfQnlLREd2X3lkNDRVZ1FXN2lxSGk0QWV2Nl8xX2dub3d4cm43S1M2VjdraUMyMktkZHE2c3I1dmVSUUNvNHFYMDNvWUdBVGxrTmhJclFOMFFXTWlVTzduZnRTd0xFV21tMzB5cGE5c01oRzJzMV9MaDg2bFdJbzBrekRwRllDWUVZcWhPTjgzV2JZY1NnekNUYnZBZVZjanNremtWcmlTcG5mOU1iXzZiTFF0aTA4RE9IYm9EZkw2bHJ4T3NPRXBiRk9lYVBuSkxXZF9oQlFCcThldWQxcFBnQVlPUVcxN19ybDB0c3dlSFZfcnZSQWRnT2FCVmdYZUJQVlNSU0ZJ?oc=5",
       "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1GOG9pSXlIRnp2djBHOVVsVEVqandKS3ZGVmVoSWk1MmFadFp3QTNhUkVSS0VKS2VuRWFaVEt4ZW5GVE02dE9YTW5lbnZyVFNqOTV6NmN5QWZ0NGNsdEtBOW1mdFBmdw?oc=5",
       "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBTamhSY2w3NzBHTGFaUTIxWFBHQWVtbjVXYjhfXzVKMmRLNzM4c3Bldm5aNktoM3FINWdNRjlWbEZ5TXIzb01lM0lOaUpidXRYRG1CX1ZCeHrSAVdBVV95cUxQc0JoY2lDUHRiS2Q1YWdYQk1ESERfeWt2RlM0LVNwMnRiQ0E3VHFQMW5KU2pyYVQyNU41M01MSGc0eHlOd1ZlWjc4NFlqOUtBbDBCRjQ5ODQ?oc=5",
       "https://news.google.com/rss/articles/CBMi9wJBVV95cUxOc3pZanJiT3V1V3VNemphZi1LU0NPYnpvR1p0bUE1RFY0c19SQjdvLTNITTJSVzVZUkkwWENjakV5dnctcWlGY3VtLXNNOHdodl84M1paVzBURUxMVmptREt2VHNxSVRNaGVmUFE0ejU0ekVEQWNvR2ljOHBDWHBObmxJODNuLVo5azl5V045MGZXQ3lBTV95Mm5odDh3OFpsUE1BOFRsYXFPRE9qRUdpbFkwQzRZRUJucHBBd3Yxc1lNUGlJVzN5Z0s1Mnl6NkZvU1JOWE4ydTFRVGM5VDYxNnZkS04wZTVoMWZJWkNkRWdxVWVrU2NvTXBDdjBsMmlEUTA5WlVJVk13dkpsZ1l5QzdBZHhZanpHaUFOQ01PZWxLS01tWG82X1RnZVVhY0ZhY0l3VF9qVDhTVUJjX1RKY3hwd3dvVE4zc0drTVo1Nlc2a1NpcFhLSWtrV2hONDJrdVFYczRMQThURlhFSkQ2OEhpbHEtOVU?oc=5",
       "https://news.google.com/rss/articles/CBMiVkFVX3lxTE0tQ1hNczBMakdtNzJ4RDczVUFmbEFiRlB3WUJ0WUZZTmVlWms0MnZHbmkzTVBVN2RHdDJ1aFRPNDF5RUE4Y0F5ZlVnWlVFSGwzQzdFN3d3?oc=5",
+      "https://news.google.com/rss/articles/CBMid0FVX3lxTFBVdEhqSVJJc3RaSGJXdUQ0d21DRTZmdGtlUkRaRzF4ZXNnMWx3TGYzcHpGbXU1Zl92b0dtbTVETDNEOGExRUtjdkRUT19Ja0FiLVl2X1VfR0wtMkp6Z2lkTlpMUDEtdndkdl9MckpPYzJaS0RYTUtB0gF_QVVfeXFMUER5SEJXR3V5U2hjUGhUU2VwNEtzbjlsbWoxZGk0UzU0eGpjS3BKcXYxZXRsZHF1a3lZTVdSNWdJbzFyNC1acmE2MS1WQ0t2YmVZZUJ6dzBCRmhBVEotQkkzNFlONTNtdE1UN0hBYzRjYmpTWlkzeE5lVWwta2owaw?oc=5",
       "https://news.google.com/rss/articles/CBMizAFBVV95cUxNRlp1OVVfSVpTLTFYSUV5UXI2Ty1wN1diS3FydXhBOE5hZzJ5dk5IYjdhNnlTSkJFWE56QzVNVUMybUtTS1FtOFJxRkN3MWtPM0d2NmxIZ1I0QVZpcXFxRXJsOFZEcXc2SFZmQi1ERW9NelVnVzB0QkxhTzJNVkl0bGNjTk1hNm5hZlBQSGkzLXRZYVBjUm5xbFBXT0V4S0lZY0VfNDU3ODhJT3lQNmhUN2NOWThrWm8tNEVWS1hOV1F6Zlc2RWUtV2I4Qk7SAdsBQVVfeXFMT0FMZFBNaWxyMnViaGJvdnhpTUIzekFXWW5HREVxQ1ZhY3R4UGVzdnpIeXpxX25PN0h1NmxfRUx0a2w3VGk0aHVxTlluMWh6RUgya3NHaFh4VFJGODhnTFJzTnk3RnhSX3VJci1zd3RsakJVdG9zOFljbUppQ2F3VHVpZ09MLWRrdEtPYmV3cV9JaXFMeF9jWWNZdWhIR2g1b2cxWFNCaktuR25lMGJiSEpDT2ptMjNWOV84ZXJRMk5aanJ6ZDl0NW5SeXNzMlVuX24xRkc2Ql9CcHBN?oc=5",
       "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5RRGV4SUUzVkV1TFBHTXZFdGowbGJucko2eGVJelN0eDV5bENQcXluem9nZEZmdzNjSmNBSFYtX1NnQmY2WnV3anZnWklfWVRPR2hSSThWay1hNjRXN2dyTw?oc=5",
       "https://news.google.com/rss/articles/CBMisgFBVV95cUxQOVhEUGJkWGRySHEwbmI4Sjh6d1Z4REd0ZU44V2hwcGdhWTZMMWdDTEdCcmdRNEdvelBZTTh4SHNiT25KbFp4QlZaeXRUcHBON21WZFZHUHhoS0xBVTAtX0FGN2tWZkZkbE12c0NuQkxRRERvRE1hdGJBakgzSnJ5emF5Wjc3Q0xaLW93SzZWT3VfdzVCbUxubUxRWEZsbUtCeTAxRnJ0dDlyYUowS3FVV2dB?oc=5",
@@ -258,6 +292,7 @@
       "https://news.google.com/rss/articles/CBMinAFBVV95cUxPejV2eHdRSWVwZmhDZUlwbk5aTGZ5d3N4Q0daVzJwd1dRRGFRMHl2aHVUcmNkek13TnBkMXpyREdKUkI1VG9tQ3NteDR4Q0pfaDBHZTVsdVZZaUFISVgyRGVTSERac0hVdFY3WWpiS1NfcDV1cE5hMHJCUGJwWUUtc0lGSnI2cnhxYTZtbjROWGZMc21IYThUUDdibWI?oc=5",
       "https://news.google.com/rss/articles/CBMisAFBVV95cUxPRTdpZUtER2JyRjZKLVM2eHJnempUVzE0S215TEJoRDlWVDZBVkdDSHRXdlQwR2VHSWhqQkNjUTZNVWJoZEg0SEFnTVRqdm1rNE5Hc25naWJkM0ZUeGdaNUh6Si1JcEtITTB6akVSZmt2OFVEMjRlWmxjWUx6S2RQRG1DMzV1THNYMmczdnZfVmRUd0ppYWlOcU5ULVRHSUEtaHpoMUY1X2ZUNHJkX2E5Sw?oc=5"
     ],
+    "YENA": [],
     "aespa": [
       "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBNQkd1VDNlRjFETTZfeGFsWUcwM0dGRlJNX0tsZXpYNklaU3o0RFhsa01KRXp3anhjd3dYM3NEa2ZkYnFTVkxXcFRRRUJUR0tuVXc3MUNOTFI4UGdXRWpMTWZ2Tmg?oc=5",
       "https://news.google.com/rss/articles/CBMilgFBVV95cUxPU1NmN2hjZnFzLWEtQkRwaktkMUpqSko3Z0pXdlhaQ3hWMVlQcjdBRVFQbjByU25FWHZYUlo4dlZJR1k5QlUtMVVlQnppWm85aE94dktGOE5yRFVLU1hLVC16TGpuREdtd0J0eXIweHpVNDhhZnhMbGU2LUNmRnFadjQtLVRocUM5VjhLdVpzOUNBUG5keEE?oc=5",
@@ -289,10 +324,12 @@
   "itunes": {
     "1141774019": "1870046940",
     "1203816887": "1840284138",
+    "1538881438": "6777869906",
     "1540251304": "6797481676",
     "1594156263": "1888358875",
     "1594159996": "6784485061",
     "1600411676": "1892154305",
+    "1605086668": "6772866175",
     "1616740364": "6776076719",
     "1635469693": "1750576829",
     "1734551937": "6792947885",
@@ -320,7 +357,15 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_google_news:STAYC": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_google_news:TWICE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_google_news:YENA": {
       "alerted": false,
       "fail_count": 0
     },
@@ -352,7 +397,15 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_itunes:STAYC": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_itunes:TWICE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_itunes:YENA": {
       "alerted": false,
       "fail_count": 0
     },
@@ -384,7 +437,15 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_melon:STAYC": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_melon:TWICE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_melon:YENA": {
       "alerted": false,
       "fail_count": 0
     },
@@ -416,7 +477,15 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_youtube:STAYC": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_youtube:TWICE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_youtube:YENA": {
       "alerted": false,
       "fail_count": 0
     },
@@ -442,7 +511,7 @@
       "check_youtube": 4
     },
     "IVE": {
-      "check_google_news": 4,
+      "check_google_news": 5,
       "check_youtube": 1
     },
     "New Jeans": {
@@ -453,7 +522,7 @@
       "check_youtube": 2
     },
     "TWICE": {
-      "check_google_news": 16
+      "check_google_news": 17
     },
     "aespa": {
       "check_google_news": 2
@@ -472,7 +541,9 @@
     "UCOmHUn--16B90oW2L6FRR3A": "k--lCrP69hg",
     "UCRDd3x33kfF0IW6g2MRUkRw": "bKW9vXEpDuM",
     "UCk9GmdlDTBfgGRb7vXeRMoQ": "FfgYCdhFrYI",
+    "UCkrDEGNM3mqZXHk2MfnOjMw": "6MtgZs4Bpj8",
     "UCnUAyD4t2LkvW68YrDh7fDg": "2iewwnDEswU",
+    "UCod5V2dpnpJLklGvVOv5FcQ": "fXxtUSyfwgY",
     "UCs-QBT4qkj_YiQw1ZntDO3g": "BCRr-KCBr_E",
     "UCzgxx_DM2Dcb9Y1spb9mUJA": "bp4InMLGJl8"
   }
