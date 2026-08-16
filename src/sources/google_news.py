@@ -4,7 +4,9 @@ Não precisa de chave de API nem cadastro — é um feed RSS público. Cobre
 matérias, participações em programas, prêmios etc. que não aparecem nas
 fontes "oficiais" (YouTube/Spotify).
 """
+import calendar
 import difflib
+import time
 from urllib.parse import quote
 
 import feedparser
@@ -14,6 +16,22 @@ GOOGLE_NEWS_RSS_URL = "https://news.google.com/rss/search?q={query}&hl=pt-BR&gl=
 # títulos com essa similaridade ou mais são tratados como a mesma notícia
 # republicada por outro portal (evita notificar a mesma matéria várias vezes)
 TITLE_SIMILARITY_THRESHOLD = 0.7
+
+# o Google News às vezes reindexa/republica uma matéria antiga com um link
+# novo (ex: site atualizou a página), o que faz ela parecer "nova" pro diff
+# por link. Entradas mais velhas que isso são ignoradas mesmo que o link
+# nunca tenha sido visto antes.
+MAX_NEWS_AGE_DAYS = 3
+
+
+def _is_recent(entry):
+    published = entry.get("published_parsed")
+    if not published:
+        # sem data no feed: não dá pra saber a idade, então não filtra
+        # (melhor arriscar notificar de novo do que perder notícia real)
+        return True
+    age_seconds = time.time() - calendar.timegm(published)
+    return age_seconds <= MAX_NEWS_AGE_DAYS * 86400
 
 
 def _dedup_by_title(entries):
@@ -51,6 +69,7 @@ def check_google_news(group, state):
         return messages
 
     entries = feed.entries[:10] if feed.entries else []
+    entries = [e for e in entries if _is_recent(e)]
     current_links = [e.get("link") for e in entries if e.get("link")]
 
     if not is_first_run:
@@ -60,6 +79,7 @@ def check_google_news(group, state):
         for entry in reversed(new_entries):
             title = entry.get("title", "Notícia nova")
             messages.append(f"*{group['name']}* na mídia:\n{title}\n{entry['link']}")
+
 
     merged = current_links + [l for l in previously_seen if l not in set(current_links)]
     seen[key] = merged[:50]  # limita o tamanho do state
