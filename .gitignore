@@ -6,3 +6,6 @@ __pycache__/
 .pytest_cache/
 node_modules/
 .wrangler/
+
+config/groups_bot.yaml
+state/seen.json

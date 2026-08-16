@@ -8,7 +8,7 @@ A Sora é um bot que fica de olho nos grupos de kpop que você acompanha e te av
 
 Atualmente ele monitora apenas o YouTube, Itunes (álbum/single), Melon (música entrou no Top 100 do chart coreano) e faz a consulta na web para notícias, mas futuramente pretendo adicionar outras plataformas
 
-Não tem servidor, banco de dados nem custo de hospedagem: ele roda de hora em hora como um workflow do GitHub Actions, usando o próprio repositório Git como "banco de dados" do que já foi visto.
+Não tem servidor, banco de dados nem custo de hospedagem: ele roda de hora em hora como um workflow do GitHub Actions, usando o cache do próprio Actions como "banco de dados" privado do que já foi visto (veja [Onde ficam meus dados](#onde-ficam-meus-dados)).
 
 ## O que ele monitora
 
@@ -26,12 +26,16 @@ Opcionalmente, dá pra ligar uns recursos de IA (usando o tier gratuito do Gemin
 
 Um workflow do GitHub Actions roda a cada hora (`.github/workflows/check-updates.yml`), executa `src/main.py`, que:
 
-1. Lê os grupos configurados em `config/groups.yaml`;
+1. Lê os grupos configurados em `config/groups.yaml` + `config/groups_bot.yaml`;
 2. Pra cada grupo, checa cada fonte e compara com o que já foi visto antes (guardado em `state/seen.json`);
 3. Junta todas as novidades encontradas na execução numa única mensagem no Telegram (só quebra em mais de uma se passar do limite de 4096 caracteres da própria API do Telegram), evita flood de uma mensagem por novidade;
-4. Commita `state/seen.json` de volta no repositório, pra lembrar o que já foi notificado da próxima vez.
+4. Salva `state/seen.json` e `config/groups_bot.yaml` atualizados no cache do GitHub Actions (não no repositório — veja [Onde ficam meus dados](#onde-ficam-meus-dados)), pra lembrar o que já foi notificado da próxima vez.
 
 A fonte de Google News também ignora matérias com mais de `MAX_NEWS_AGE_DAYS` (3 dias, em `src/sources/google_news.py`) de publicação, mesmo que o link nunca tenha sido visto antes, assim evita notificar notícia velha que o Google reindexou com um link novo.
+
+## Onde ficam meus dados
+
+O código é público, mas `config/groups_bot.yaml` e `state/seen.json` (seus grupos e o histórico de novidades) não são commitados — ficam só no [cache do GitHub Actions](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows) do seu repositório, fora do git.
 
 ## Instalação
 
@@ -73,11 +77,7 @@ No repositório: **Settings > Secrets and variables > Actions > New repository s
 - `YOUTUBE_API_KEY`
 - `GEMINI_API_KEY` (opcional)
 
-### 6. Permitir que o workflow commite de volta
-
-Em **Settings > Actions > General > Workflow permissions**, selecione **Read and write permissions** e salve. Sem isso, o passo que salva `state/seen.json` vai falhar (o restante — checagem e notificação — funciona normalmente mesmo assim).
-
-### 7. Testar
+### 6. Testar
 
 Depois de configurar os secrets e o `config/groups.yaml`, vá na aba **Actions** do repositório, clique no workflow "Checar novidades das idols" e depois em **Run workflow** pra disparar manualmente. Confira os logs pois na primeira execução o bot só grava a "baseline" de cada fonte (não notifica o histórico todo de uma vez), e por isso não é esperado receber mensagem nenhuma no primeiro run.
 
@@ -164,7 +164,7 @@ A Sora é um projeto pessoal simples meu, mas issues e PRs são bem-vindos princ
 ## Troubleshooting
 
 - **Não chega nenhuma mensagem**: confira se você mandou uma mensagem pro bot antes (o Telegram só deixa bots iniciarem conversa se o usuário falou com ele primeiro) e se `TELEGRAM_CHAT_ID` está correto.
-- **Erro ao commitar o state**: revise o passo 7 da instalação (permissão de escrita do workflow).
+- **Bot "esqueceu" grupos/histórico depois de um tempo parado**: o cache do GitHub Actions é descartado automaticamente se ficar 7+ dias sem uso — só acontece se o workflow ficar parado por mais de uma semana (ex: repositório pausado). Rodando de hora em hora normalmente, isso nunca acontece. Veja [Onde ficam meus dados](#onde-ficam-meus-dados).
 - **YouTube retornando erro de cota**: dificilmente vai acontecer com poucos canais, mas se tiver muitos grupos/canais, considere rodar de hora em hora em vez de a cada 30 min.
 - **Fonte "X" falhando pra "Grupo" há N execuções seguidas**: alerta automático quando uma fonte quebra de verdade (não é só uma falha isolada) — confira os logs do Actions pra ver o erro completo. A fonte do Melon é a mais sujeita a isso porque não tem API oficial (é scraping da página do chart); se a Melon mudar o layout do site, é só isso que quebra, as outras fontes continuam normais.
 
