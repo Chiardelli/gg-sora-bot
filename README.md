@@ -1,7 +1,4 @@
-# gg-heartbeat
-
-[![Checar novidades das idols](https://github.com/Chiardelli/gg-heartbeat/actions/workflows/check-updates.yml/badge.svg)](https://github.com/Chiardelli/gg-heartbeat/actions/workflows/check-updates.yml)
-![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
+# Sora
 
 > Bot de alertas no Telegram sobre girl groups de kpop, feito por uma gg stan com pouco tempo para scrollar no twitter. ˚.🎀༘⋆
 
@@ -12,6 +9,7 @@
 - [Como funciona por baixo dos panos](#como-funciona-por-baixo-dos-panos)
 - [Instalação](#instalação)
 - [Como usar](#como-usar)
+- [Webhook de comandos instantâneos (opcional)](#webhook-de-comandos-instantâneos-opcional)
 - [Testes](#testes)
 - [Contribuindo](#contribuindo)
 - [Troubleshooting](#troubleshooting)
@@ -20,7 +18,7 @@
 
 ## O que é
 
-`gg-heartbeat` é um bot que fica de olho nos grupos de kpop que você acompanha e te avisa no Telegram assim que sai algo novo: vídeo no YouTube, álbum/single ou notícia. Essa ideia surgiu para resolver um problema bem específico meu, que é não ter mais o mesmo tempo de quando eu era adolescente e podia ficar no twitter acompanhando tudo em tempo real, mas felizmente, hoje em dia, existe o GitHub Actions para fazer isso por mim.
+A Sora é um bot que fica de olho nos grupos de kpop que você acompanha e te avisa no Telegram assim que sai algo novo: vídeo no YouTube, álbum/single ou notícia. Essa ideia surgiu para resolver um problema bem bobo e específico meu, que é não ter mais o mesmo tempo de quando eu era adolescente e podia ficar no twitter acompanhando tudo em tempo real
 
 Atualmente ele monitora apenas o YouTube, Itunes (álbum/single), Melon (música entrou no Top 100 do chart coreano) e faz a consulta na web para notícias, mas futuramente pretendo adicionar outras plataformas
 
@@ -96,10 +94,10 @@ Depois de configurar os secrets e o `config/groups.yaml`, vá na aba **Actions**
 
 No dia a dia você não precisa fazer nada, o workflow roda sozinho de hora em hora e as novidades chegam direto no Telegram.
 
-Comandos disponíveis no Telegram:
+Comandos disponíveis no Telegram — respondidos na hora pelo webhook (veja [Webhook de comandos instantâneos](#webhook-de-comandos-instantâneos-opcional)); se o webhook não estiver configurado, caem no fallback do polling e demoram até a próxima execução do cron:
 
 - **`/help`**: mostra a lista de comandos disponíveis.
-- **`/addgroup Nome Do Grupo`**: adiciona um grupo. O bot tenta achar sozinho o canal do YouTube e o artista no iTunes, salva em `config/groups_bot.yaml` (mesclado automaticamente com `config/groups.yaml`) e responde confirmando o que encontrou. Vale conferir se o match ficou certo, principalmente pra nomes de grupo mais genéricos. Some efeito no próximo run (até 1h, ou dispare manualmente como abaixo).
+- **`/addgroup Nome Do Grupo`**: adiciona um grupo. O bot tenta achar sozinho o canal do YouTube e o artista no iTunes, salva em `config/groups_bot.yaml` (mesclado automaticamente com `config/groups.yaml`) e responde confirmando o que encontrou. Vale conferir se o match ficou certo, principalmente pra nomes de grupo mais genéricos.
 - **`/removegroup Nome Do Grupo`**: remove um grupo. Só funciona pra grupos adicionados via `/addgroup` (ou seja, que estão em `config/groups_bot.yaml`)
 - **`/pausegroup Nome Do Grupo`** / **`/resumegroup Nome Do Grupo`**: pausa/reativa as notificações de um grupo sem perder o histórico (útil pra grupo em hiatus). Mesma restrição do `/removegroup`: só funciona pra grupos adicionados via `/addgroup`.
 - **`/listgroups`**: lista todos os grupos configurados (de `config/groups.yaml` e `config/groups_bot.yaml` juntos), indicando origem (`manual`/`via /addgroup`) e se está pausado.
@@ -121,6 +119,13 @@ export $(grep -v '^#' .env | xargs)  # carrega o .env no shell
 python src/main.py
 ```
 
+## Webhook de comandos instantâneos (opcional)
+
+Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos e sem precisar de servidor sempre ligado:
+
+```
+Telegram → Cloudflare Worker → GitHub repository_dispatch → workflow do Actions
+```
 ## Testes
 
 `tests/test_logic.py` valida a lógica de "o que é novo" de cada fonte com dados falsos (sem precisar de credenciais reais ou rede). Rode com:
@@ -129,11 +134,11 @@ python src/main.py
 python3 tests/test_logic.py
 ```
 
-Um workflow de CI (`.github/workflows/tests.yml`) roda esses testes automaticamente a cada push/PR.
+Um workflow de CI (`.github/workflows/tests.yml`) roda esses testes automaticamente a cada push/PR. `src/process_webhook_update.py` (a peça que o `repository_dispatch` aciona) é coberto pelos mesmos testes, junto dos outros.
 
 ## Contribuindo
 
-O gg-heartbeat/Sora Bot é um projeto pessoal meu, mas issues e PRs são bem-vindos principalmente pra novas fontes ou correções. ^^
+A Sora é um projeto pessoal meu, mas issues e PRs são bem-vindos principalmente pra novas fontes ou correções. ^^
 
 1. Faça um fork e crie uma branch a partir da `main`.
 2. Rode `pip install -r requirements.txt` e confirme que `python3 tests/test_logic.py` passa antes e depois da sua mudança.
@@ -141,7 +146,6 @@ O gg-heartbeat/Sora Bot é um projeto pessoal meu, mas issues e PRs são bem-vin
 
 **Pra adicionar uma fonte nova** (ex: um novo serviço de música ou rede social): crie um módulo em `src/sources/` com uma função `check_<fonte>(group, state)` que devolve uma lista de mensagens de texto, seguindo o padrão dos módulos existentes (`youtube.py`, `itunes.py`, `google_news.py`, `melon.py`) — cada fonte é isolada e só precisa ser registrada em `SOURCE_CHECKS`, em `src/main.py`. A seção [Roadmap](#roadmap) tem algumas ideias de fontes que ainda faltam.
 
-Encontrou um bug ou tem uma sugestão? Abra uma [issue](https://github.com/Chiardelli/gg-heartbeat/issues). :3
 
 ## Troubleshooting
 
