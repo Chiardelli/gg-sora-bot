@@ -29,3 +29,9 @@ groups:
   itunes_artist_ids:
   - '1616740364'
   google_news_query: le sserafim kpop
+- name: Gfriend
+  youtube_channel_ids:
+  - UCRDd3x33kfF0IW6g2MRUkRw
+  itunes_artist_ids:
+  - '958416186'
+  google_news_query: Gfriend kpop
