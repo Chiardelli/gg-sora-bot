@@ -1,0 +1,44 @@
+name: Comando do Telegram (instantâneo)
+
+on:
+  repository_dispatch:
+    types: [telegram-command]
+
+permissions:
+  contents: write # necessário pra commitar config/groups_bot.yaml atualizado
+
+concurrency:
+  group: telegram-webhook
+  cancel-in-progress: false
+
+jobs:
+  handle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Processar o comando
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          TELEGRAM_UPDATE_JSON: ${{ toJson(github.event.client_payload) }}
+        run: python src/process_webhook_update.py
+
+      - name: Commitar grupos atualizados
+        run: |
+          git config user.name "gg-heartbeat-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add config/groups_bot.yaml
+          git diff --cached --quiet || git commit -m "chore: atualiza grupos via comando do Telegram [skip ci]"
+          git push
