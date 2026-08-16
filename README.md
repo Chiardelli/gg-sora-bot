@@ -107,7 +107,7 @@ python src/main.py
 
 ## Webhook de comandos instantâneos (opcional)
 
-Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos, **de graça** e sem precisar de servidor sempre ligado:
+Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos e sem precisar de servidor sempre ligado:
 
 ```
 Telegram → Cloudflare Worker (retransmissor fininho) → GitHub repository_dispatch → workflow do Actions (roda telegram_commands.py de verdade e responde)
