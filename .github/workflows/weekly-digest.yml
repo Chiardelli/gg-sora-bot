@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {} # permite rodar manualmente pela aba "Actions" do GitHub
 
 permissions:
-  contents: write # necessário pra commitar o state/seen.json zerado
+  contents: read
 
 concurrency:
   group: weekly-digest
@@ -53,13 +53,3 @@ jobs:
             config/groups_bot.yaml
             state/seen.json
           key: sora-dados-privados-${{ github.run_id }}
-
-      # FASE 1 da migração pra cache privado: commit antigo mantido por
-      # enquanto até confirmar que o cache está semeado. Remover depois.
-      - name: Commitar estado atualizado
-        run: |
-          git config user.name "gg-heartbeat-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add state/seen.json
-          git diff --cached --quiet || git commit -m "chore: reseta contagem do resumo semanal [skip ci]"
-          git push
