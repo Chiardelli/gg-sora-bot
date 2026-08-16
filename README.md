@@ -16,8 +16,10 @@ Não tem servidor, banco de dados nem custo de hospedagem: ele roda de hora em h
 |---|---|---|
 | YouTube | Vídeo novo em um canal | Chave gratuita da YouTube Data API |
 | iTunes/Apple Music | Álbum/single novo | Nada (API pública) |
-| Google News | Notícia nova sobre o grupo | Nada (RSS público) |
+| Google News | Notícia nova sobre o grupo (consulta em pt-BR, coreano, japonês e chinês) | Nada (RSS público). Com `GEMINI_API_KEY` configurada, notícia que não vem em português é traduzida automaticamente. |
 | Melon | Música entrou no Top 100 do chart coreano | Nada (scraping da página pública — mais frágil que as outras fontes, veja [Troubleshooting](#troubleshooting)) |
+
+Opcionalmente, dá pra ligar uns recursos de IA (usando o tier gratuito do Gemini) pra deixar as notificações mais úteis. [Recursos de IA (opcional)](#recursos-de-ia-opcional).
 
 
 ## Como funciona por baixo dos panos
@@ -69,6 +71,7 @@ No repositório: **Settings > Secrets and variables > Actions > New repository s
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 - `YOUTUBE_API_KEY`
+- `GEMINI_API_KEY` (opcional)
 
 ### 6. Permitir que o workflow commite de volta
 
@@ -89,6 +92,8 @@ Comandos disponíveis no Telegram — respondidos na hora pelo webhook (veja [We
 - **`/removegroup Nome Do Grupo`**: remove um grupo. Só funciona pra grupos adicionados via `/addgroup` (ou seja, que estão em `config/groups_bot.yaml`)
 - **`/pausegroup Nome Do Grupo`** / **`/resumegroup Nome Do Grupo`**: pausa/reativa as notificações de um grupo sem perder o histórico (útil pra grupo em hiatus). Mesma restrição do `/removegroup`: só funciona pra grupos adicionados via `/addgroup`.
 - **`/listgroups`**: lista todos os grupos configurados (de `config/groups.yaml` e `config/groups_bot.yaml` juntos), indicando origem (`manual`/`via /addgroup`) e se está pausado.
+- **`/recommend`**: sugere grupos/solos parecidos com os que você acompanha, com uma música pra começar. Requer `GEMINI_API_KEY` configurada
+- **`/ask sua pergunta`**: responde com base nas novidades notificadas nos últimos 14 dias (ex: `/ask o que rolou com a IVE essa semana?`). Requer `GEMINI_API_KEY` configurada.
 
 Outras formas de ajustar o bot:
 
@@ -107,9 +112,30 @@ export $(grep -v '^#' .env | xargs)  # carrega o .env no shell
 python src/main.py
 ```
 
+## Recursos de IA (opcional)
+
+Sem nenhuma configuração extra, o bot continua 100% funcional mas para deixar mais natural e eficiente, dá pra ligar alguns recursos de IA usando o [Gemini](https://aistudio.google.com/apikey) que tem um tier gratuito generoso.
+
+1. Acesse [Google AI Studio](https://aistudio.google.com/apikey) e gere uma API key gratuita
+2. Adicione `GEMINI_API_KEY` nos Secrets do repositório (mesmo passo 5 da instalação) e/ou no seu `.env` local.
+
+Com a chave configurada, isso passa a acontecer:
+
+- **Boletim mais natural**: em vez de só concatenar as novidades brutas, a IA reescreve a mensagem consolidada como um texto único e mais natural em português preservando todos os links originais (se a reescrita derrubar algum link, o bot descarta o resumo e manda o texto bruto normalmente, por segurança).
+- **Notícia estrangeira traduzida**: o Google News agora é consultado em pt-BR, coreano, japonês e chinês. A imprensa de origem cobre kpop mais rápido e com mais detalhe que a brasileira. Notícias que vierem num desses idiomas são traduzidas automaticamente pra português antes de notificar; sem `GEMINI_API_KEY`, ela ainda chega, só que no idioma original (com um aviso indicando o idioma).
+- **Filtro de relevância nas notícias**: antes de notificar uma notícia do Google News, a IA confere se ela é mesmo sobre o grupo (ajuda com nomes mais genéricos, que geram falso positivo só na busca por texto). Se a IA estiver indisponível, todas as notícias passam normalmente (comportamento padrão).
+- **Fusão de notícia duplicada**: quando o mesmo fato é coberto por vários portais/idiomas (comum com a busca multilíngue), a IA funde tudo numa mensagem só, escolhendo a cobertura mais completa e confiável como representante (as demais viram uma nota "+ N outras fontes").
+- **Priorização**: a mensagem consolidada é ordenada do mais importante pro menos importante (comeback/álbum novo antes de participação menor em programa ou fofoca de bastidor), em vez da ordem cronológica bruta.
+- **Resumo semanal com comentário**: o resumo de segunda-feira ganha um comentário curto gerado pela IA sobre os destaques da semana, além da contagem numérica de sempre.
+- **`/recommend`**: novo comando no Telegram que sugere grupos/solos parecidos com os que você já acompanha (com uma música pra começar a ouvir em cada sugestão), baseado no que está em `config/groups.yaml` + `config/groups_bot.yaml`.
+- **`/ask`**: pergunta livre sobre os grupos, respondida com base num histórico das últimas novidades notificadas (guardado em `state["activity_log"]`, podado automaticamente pra manter só os últimos 14 dias / 500 itens — não deixa `state/seen.json` crescer sem controle).
+
+Por baixo dos panos, respostas de tradução/filtro de relevância/fusão de duplicata ficam num cache curto (`state["ai_cache"]`, 3 dias / 300 itens)
+Nada disso consome cota das outras fontes (YouTube/iTunes/Melon) nem precisa de infraestrutura nova, sendo só mais uma variável de ambiente lida por `src/ai.py`.
+
 ## Webhook de comandos instantâneos (opcional)
 
-Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos, **de graça** e sem precisar de servidor sempre ligado:
+Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos e sem precisar de servidor sempre ligado:
 
 ```
 Telegram → Cloudflare Worker (retransmissor fininho) → GitHub repository_dispatch → workflow do Actions (roda telegram_commands.py de verdade e responde)
