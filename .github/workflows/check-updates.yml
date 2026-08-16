@@ -31,6 +31,16 @@ jobs:
       - name: Instalar dependências
         run: pip install -r requirements.txt
 
+      - name: Restaurar dados privados do cache (grupos + state)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            config/groups_bot.yaml
+            state/seen.json
+          key: sora-dados-privados-${{ github.run_id }}
+          restore-keys: |
+            sora-dados-privados-
+
       - name: Rodar checagem de novidades
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -39,6 +49,17 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python src/main.py
 
+      - name: Salvar dados privados atualizados no cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            config/groups_bot.yaml
+            state/seen.json
+          key: sora-dados-privados-${{ github.run_id }}
+
+      # FASE 1 da migração pra cache privado (veja Recursos de IA / privacidade
+      # no README): commit antigo mantido por enquanto só até confirmar que o
+      # cache acima está semeado com os dados atuais. Remover depois.
       - name: Commitar estado atualizado
         run: |
           git config user.name "gg-heartbeat-bot"
