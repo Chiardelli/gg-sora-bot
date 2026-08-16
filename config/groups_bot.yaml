@@ -47,3 +47,9 @@ groups:
   itunes_artist_ids:
   - '1734551937'
   google_news_query: ILLIT kpop
+- name: YENA
+  youtube_channel_ids:
+  - UCkrDEGNM3mqZXHk2MfnOjMw
+  itunes_artist_ids:
+  - '1605086668'
+  google_news_query: YENA kpop
