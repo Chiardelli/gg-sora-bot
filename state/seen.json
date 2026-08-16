@@ -13,6 +13,8 @@
       "https://news.google.com/rss/articles/CBMihgFBVV95cUxQZkFZTEVaV1Vuakxod20zNVNlWmlvenMxNWllbWpHUU5tWVBsc1hQODVrMDllelhiUXVIMGlyS2VTcXlRaTd6NGJ4OTg5Mkh3NkUtcUV0N2VuWnBtYzhXenZEWl9qdHFGRkgxOEpHR3U2Z0piMjB5WHR5ZkQ4M0xpZmEzZXlHZw?oc=5",
       "https://news.google.com/rss/articles/CBMibEFVX3lxTE1wTUlpUENBZTlpUS1ES1Z3Mm1EY0FlSURhcFJjVjdtaDMtekpMYThYbXBKMHFQaUZ6ZDVRcnEtMXo3eFNaV1UtQzUzQUhoQ1lxSjRXNFZtRDZnXzJzeVMxXzRtVG1HSFAzd29nWQ?oc=5"
     ],
+    "Gfriend": [],
+    "ILLIT": [],
     "IVE": [
       "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQREl6SEZzb0dvZjUzSmI4ZDc0OWotOVhuVEVpSk9kNHQ4M2lONWpQV3BFZVdyVklrLWE2SUdpRDkyUS1ETEpwUlBaTEYzdnBBdkZ1WTZMVnBjWEE5WDdJQ1lHNUZIQVBDMmNGd2UxaDJGYnVFb1llN1R2SXk5aC11YmpWT2J0MEQ5THNpT1ZFdlJZdXU4ZlVwYnFlQVdhVjBqNnczcUh6aDdveTNDNllqXzB0WkNLS2Rmckd3OFU5MG9RbjFVVVppUTdMb1FNUVppem81Yg?oc=5",
       "https://news.google.com/rss/articles/CBMiigFBVV95cUxNYkg5REVBeTIwYUxrUTNrV2FCY3RaV0JYSFNKYXlsZTFFRlhiM1haR0dBVGl6VGVqUUdScU54aHZ5T0NCTkJSLUtuZ0p0VW9LYTItbHlsQ1drcEdRNVBjWGVzaVE5czZzeUpEMFk5cXpfR3gxWG9mUm1uN2RTRUhTM1RCaVFtTUJPcVE?oc=5",
@@ -61,6 +63,7 @@
       "https://news.google.com/rss/articles/CBMinwFBVV95cUxQbjFMNTIybWdRdk1rVHJWU3RwZ2dMbUZRLTVIX3Y4ck5lY0FDeEUxVFVKTjgwWlEtb2JUOUNoV0llX2hhanZwc3ZkMmpWUmk5OW1SbW1jYlJuSjJKWU0zRVl5dE1FLUR1M0xvTGFMand4NlRkdGlYN3k1UFF0WFBpQlVXSU5fWUs1R1FTT1lIa0xjdldSZ093QzVMZlZDc00?oc=5",
       "https://news.google.com/rss/articles/CBMiowFBVV95cUxQeUVMczBGT3FBTjdIMGJUbzBLZ1ZnVlNmQnFPR2RYaVhrVVRyZ1pYOGs1UU9ma2RrT2MzWmNwTV85ZjVYLWZ2cFlFV3RWUDdLaXMzUmw4cDZ6aDZaTjVFVjFucGVFN3VOVmZVMTFqUVhWeWpMY0s2dExfU09GU2Z2blBzSDk3SzZDVHZFbXhwMnpkajN4VDlBZ29ISWY0WTRITEVn?oc=5"
     ],
+    "New Jeans": [],
     "Red Velvet": [
       "https://news.google.com/rss/articles/CBMiiwFBVV95cUxOdk5vYWdrMUx0MHEzdUFzalJub3hJNkhJaU1wR0IxT3N0QXBISmtvaXd3UUZRVFhkdzFWcUJoMUpJQnFKRG5kemRINl9fVVRJS1Y4VGtHRHUwSjMxNTJucTV6SGlmbXROTUpFbVJkcmZUaE1sbW93bGNuMWNLbVNCZS1Gc2lSZmFWc1dz?oc=5",
       "https://news.google.com/rss/articles/CBMiswFBVV95cUxPV3RjNUxhX19wb1ZKcGlFT194SGFHYk9WaDhyMVRzQmtlS0lCQnRCOXU3elI1RWRJT2hkVVpDTGtabUlGNVFKdHlNdXYxVzJudHdVTUNJNm53QXV1b2pkY3JXRnNnWkxlbEo5NzZhbHdQcVl4WllEbEVQT1F3LVZTNTJ0SDZjMzJwdzNOTVNFOU53SENyVlFUaW5ySllZSFNBWW11UVJUaGdYNHBQaHdMWkNPcw?oc=5",
@@ -119,10 +122,25 @@
     "1594159996": "6784485061",
     "1600411676": "1892154305",
     "1616740364": "6776076719",
-    "906961899": "6794291724"
+    "1635469693": "1750576829",
+    "1734551937": "6792947885",
+    "906961899": "6794291724",
+    "958416186": "1788844550"
   },
   "source_health": {
+    "check_google_news:Gfriend": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_google_news:ILLIT": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_google_news:IVE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_google_news:New Jeans": {
       "alerted": false,
       "fail_count": 0
     },
@@ -142,7 +160,19 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_itunes:Gfriend": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_itunes:ILLIT": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_itunes:IVE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_itunes:New Jeans": {
       "alerted": false,
       "fail_count": 0
     },
@@ -162,7 +192,19 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_melon:Gfriend": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_melon:ILLIT": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_melon:IVE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_melon:New Jeans": {
       "alerted": false,
       "fail_count": 0
     },
@@ -182,7 +224,19 @@
       "alerted": false,
       "fail_count": 0
     },
+    "check_youtube:Gfriend": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_youtube:ILLIT": {
+      "alerted": false,
+      "fail_count": 0
+    },
     "check_youtube:IVE": {
+      "alerted": false,
+      "fail_count": 0
+    },
+    "check_youtube:New Jeans": {
       "alerted": false,
       "fail_count": 0
     },
@@ -212,7 +266,10 @@
     "UC-clMkTZa7k-FxmNgMjoCgQ": "nY5xs9KbVsc",
     "UC8whlOg70m2Yr3qSMjUhh0g": "C2Zm1Q7uepw",
     "UC9GtSLeksfK4yuJ_g1lgQbg": "QnM3buVzC78",
+    "UCEpFoWeCMCo5z3EvWaz6hQQ": "ViFNRBCU1cY",
+    "UCMki_UkHb4qSc0qyEcOHHJw": "YujaE27VmSA",
     "UCOmHUn--16B90oW2L6FRR3A": "k--lCrP69hg",
+    "UCRDd3x33kfF0IW6g2MRUkRw": "bKW9vXEpDuM",
     "UCk9GmdlDTBfgGRb7vXeRMoQ": "qSh3CDnbUSo",
     "UCnUAyD4t2LkvW68YrDh7fDg": "2iewwnDEswU",
     "UCs-QBT4qkj_YiQw1ZntDO3g": "BCRr-KCBr_E",
