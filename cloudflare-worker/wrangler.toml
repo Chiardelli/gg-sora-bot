@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2024-11-01"
 
 [vars]
-GITHUB_REPO = "Chiardelli/gg-heartbeat"
+GITHUB_REPO = "Chiardelli/gg-sora-bot"
 
 # TELEGRAM_WEBHOOK_SECRET e GITHUB_TOKEN são segredos — não vão aqui.
 # Configure com: wrangler secret put TELEGRAM_WEBHOOK_SECRET
