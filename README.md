@@ -80,10 +80,10 @@ Depois de configurar os secrets e o `config/groups.yaml`, vá na aba **Actions**
 
 No dia a dia você não precisa fazer nada, o workflow roda sozinho de hora em hora e as novidades chegam direto no Telegram.
 
-Comandos disponíveis no Telegram:
+Comandos disponíveis no Telegram — respondidos na hora pelo webhook (veja [Webhook de comandos instantâneos](#webhook-de-comandos-instantâneos-opcional)); se o webhook não estiver configurado, caem no fallback do polling e demoram até a próxima execução do cron:
 
 - **`/help`**: mostra a lista de comandos disponíveis.
-- **`/addgroup Nome Do Grupo`**: adiciona um grupo. O bot tenta achar sozinho o canal do YouTube e o artista no iTunes, salva em `config/groups_bot.yaml` (mesclado automaticamente com `config/groups.yaml`) e responde confirmando o que encontrou. Vale conferir se o match ficou certo, principalmente pra nomes de grupo mais genéricos. Some efeito no próximo run (até 1h, ou dispare manualmente como abaixo).
+- **`/addgroup Nome Do Grupo`**: adiciona um grupo. O bot tenta achar sozinho o canal do YouTube e o artista no iTunes, salva em `config/groups_bot.yaml` (mesclado automaticamente com `config/groups.yaml`) e responde confirmando o que encontrou. Vale conferir se o match ficou certo, principalmente pra nomes de grupo mais genéricos.
 - **`/removegroup Nome Do Grupo`**: remove um grupo. Só funciona pra grupos adicionados via `/addgroup` (ou seja, que estão em `config/groups_bot.yaml`)
 - **`/pausegroup Nome Do Grupo`** / **`/resumegroup Nome Do Grupo`**: pausa/reativa as notificações de um grupo sem perder o histórico (útil pra grupo em hiatus). Mesma restrição do `/removegroup`: só funciona pra grupos adicionados via `/addgroup`.
 - **`/listgroups`**: lista todos os grupos configurados (de `config/groups.yaml` e `config/groups_bot.yaml` juntos), indicando origem (`manual`/`via /addgroup`) e se está pausado.
@@ -105,6 +105,14 @@ export $(grep -v '^#' .env | xargs)  # carrega o .env no shell
 python src/main.py
 ```
 
+## Webhook de comandos instantâneos (opcional)
+
+Sem isso, comandos do Telegram só são processados quando o cron rodar (até 1h de espera). Essa seção monta um caminho pra resposta em segundos, **de graça** e sem precisar de servidor sempre ligado:
+
+```
+Telegram → Cloudflare Worker (retransmissor fininho) → GitHub repository_dispatch → workflow do Actions (roda telegram_commands.py de verdade e responde)
+```
+
 ## Testes
 
 `tests/test_logic.py` valida a lógica de "o que é novo" de cada fonte com dados falsos (sem precisar de credenciais reais ou rede). Rode com:
@@ -113,7 +121,7 @@ python src/main.py
 python3 tests/test_logic.py
 ```
 
-Um workflow de CI (`.github/workflows/tests.yml`) roda esses testes automaticamente a cada push/PR.
+Um workflow de CI (`.github/workflows/tests.yml`) roda esses testes automaticamente a cada push/PR. `src/process_webhook_update.py` (a peça que o `repository_dispatch` aciona) é coberto pelos mesmos testes, junto dos outros.
 
 ## Contribuindo
 

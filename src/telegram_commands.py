@@ -2,9 +2,11 @@
 /removegroup, /pausegroup, /resumegroup, /listgroups, /help) pra gerenciar
 grupos na configuração sem precisar editar o repositório.
 
-Usa long polling manual (getUpdates): como o bot já roda de hora em hora via
-GitHub Actions, não precisa de um processo dedicado ouvindo mensagens — cada
-execução só verifica se chegou algum comando novo desde a última vez.
+`process_telegram_commands` faz long polling manual (getUpdates), usado
+pelo cron do GitHub Actions como fallback. A resposta instantânea de
+verdade vem do webhook (`webhook/app.py`, hospedado à parte no Fly.io), que
+reaproveita `_dispatch_command` daqui pra cada update recebido via push do
+Telegram, sem esperar o próximo cron.
 """
 import os
 import re
@@ -159,6 +161,23 @@ COMMANDS = [
 ]
 
 
+def _dispatch_command(text):
+    """Roda o primeiro comando de COMMANDS que casar com `text` e devolve o
+    texto de resposta, ou None se nenhum comando reconhecido. Reaproveitada
+    tanto pelo polling (process_telegram_commands) quanto pelo webhook."""
+    for pattern, handler in COMMANDS:
+        match = pattern.match(text)
+        if not match:
+            continue
+        try:
+            return handler(match)
+        except Exception as exc:
+            reply = f"Erro ao processar o comando: {exc}"
+            print(f"[telegram_commands] {reply}")
+            return reply
+    return None
+
+
 def process_telegram_commands(state):
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not chat_id:
@@ -174,16 +193,6 @@ def process_telegram_commands(state):
         if str(message.get("chat", {}).get("id")) != str(chat_id):
             continue  # ignora mensagens de qualquer chat que não seja o dono
 
-        text = (message.get("text") or "").strip()
-
-        for pattern, handler in COMMANDS:
-            match = pattern.match(text)
-            if not match:
-                continue
-            try:
-                reply = handler(match)
-            except Exception as exc:
-                reply = f"Erro ao processar o comando: {exc}"
-                print(f"[telegram_commands] {reply}")
+        reply = _dispatch_command((message.get("text") or "").strip())
+        if reply is not None:
             send_telegram_message(reply, parse_mode=None)
-            break

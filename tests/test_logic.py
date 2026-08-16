@@ -3,6 +3,7 @@ de diff das fontes com dados falsos, sem depender de rede/credenciais reais.
 """
 import sys
 import os
+import json
 import types
 from unittest.mock import patch
 
@@ -240,6 +241,44 @@ def test_telegram_help_command_replies_with_help_text():
     finally:
         os.environ.pop("TELEGRAM_CHAT_ID", None)
         os.environ.pop("TELEGRAM_BOT_TOKEN", None)
+
+
+def test_process_webhook_update_dispatches_command():
+    import process_webhook_update
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_UPDATE_JSON"] = json.dumps(
+        {"update_id": 1, "message": {"chat": {"id": 999}, "text": "/help"}}
+    )
+    sent = []
+
+    try:
+        with patch.object(process_webhook_update, "send_telegram_message", side_effect=lambda t, **kw: sent.append(t)):
+            process_webhook_update.main()
+        assert len(sent) == 1 and "/addgroup" in sent[0], f"esperada 1 resposta com /addgroup, veio {sent}"
+        print("process_webhook_update /help OK")
+    finally:
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_UPDATE_JSON", None)
+
+
+def test_process_webhook_update_ignores_other_chat():
+    import process_webhook_update
+
+    os.environ["TELEGRAM_CHAT_ID"] = "999"
+    os.environ["TELEGRAM_UPDATE_JSON"] = json.dumps(
+        {"update_id": 1, "message": {"chat": {"id": 111}, "text": "/help"}}
+    )
+    sent = []
+
+    try:
+        with patch.object(process_webhook_update, "send_telegram_message", side_effect=lambda t, **kw: sent.append(t)):
+            process_webhook_update.main()
+        assert sent == [], f"esperado nenhuma resposta pra chat diferente, veio {sent}"
+        print("process_webhook_update ignora outro chat OK")
+    finally:
+        os.environ.pop("TELEGRAM_CHAT_ID", None)
+        os.environ.pop("TELEGRAM_UPDATE_JSON", None)
 
 
 def test_telegram_pausegroup_and_resumegroup_commands():
@@ -511,6 +550,8 @@ if __name__ == "__main__":
     test_telegram_removegroup_command_deletes_group()
     test_telegram_listgroups_command_replies_with_groups()
     test_telegram_help_command_replies_with_help_text()
+    test_process_webhook_update_dispatches_command()
+    test_process_webhook_update_ignores_other_chat()
     test_telegram_pausegroup_and_resumegroup_commands()
     test_google_news_dedup_similar_titles()
     test_melon_first_run_then_new_chart_entry()
