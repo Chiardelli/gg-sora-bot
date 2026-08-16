@@ -35,3 +35,9 @@ groups:
   itunes_artist_ids:
   - '958416186'
   google_news_query: Gfriend kpop
+- name: New Jeans
+  youtube_channel_ids:
+  - UCMki_UkHb4qSc0qyEcOHHJw
+  itunes_artist_ids:
+  - '1635469693'
+  google_news_query: New Jeans kpop
