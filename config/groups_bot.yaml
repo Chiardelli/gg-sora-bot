@@ -53,3 +53,9 @@ groups:
   itunes_artist_ids:
   - '1605086668'
   google_news_query: YENA kpop
+- name: STAYC
+  youtube_channel_ids:
+  - UCod5V2dpnpJLklGvVOv5FcQ
+  itunes_artist_ids:
+  - '1538881438'
+  google_news_query: STAYC kpop
