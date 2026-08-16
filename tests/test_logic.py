@@ -86,6 +86,29 @@ def test_google_news_first_run_no_notification_then_detects_new():
     print("google_news diff logic OK:", msgs_second)
 
 
+def test_google_news_ignores_old_reindexed_entry():
+    from sources import google_news
+    import time
+
+    group = {"name": "Grupo Teste", "google_news_query": "grupo teste kpop"}
+    state = {"google_news": {"Grupo Teste": ["u1"]}}
+
+    now = time.gmtime()
+    old = time.gmtime(time.time() - (google_news.MAX_NEWS_AGE_DAYS + 5) * 86400)
+
+    entries = [
+        {"link": "u_novo", "title": "Notícia de verdade recém-saída", "published_parsed": now},
+        {"link": "u_velho", "title": "Matéria antiga reindexada com link novo", "published_parsed": old},
+    ]
+    feed = types.SimpleNamespace(entries=entries)
+
+    with patch.object(google_news.feedparser, "parse", return_value=feed):
+        msgs = google_news.check_google_news(group, state)
+
+    assert len(msgs) == 1 and "u_novo" in msgs[0], f"esperada só a notícia recente, veio {msgs}"
+    assert "u_velho" not in state["google_news"]["Grupo Teste"], "notícia velha não deveria nem entrar no state"
+    print("google_news ignora reindexação de notícia velha OK:", msgs)
+
 def test_telegram_addgroup_command_creates_group():
     import telegram_commands
 
@@ -487,6 +510,30 @@ def test_weekly_digest_skips_send_when_no_counts():
     assert sent == [], f"esperado nenhum envio sem novidades na semana, veio {sent}"
     print("weekly digest sem novidades: não envia OK")
 
+def test_build_message_batches_groups_small_messages_into_one():
+    from telegram_notify import build_message_batches
+
+    batches = build_message_batches(["novidade 1", "novidade 2", "novidade 3"])
+    assert len(batches) == 1
+    assert "novidade 1" in batches[0] and "novidade 3" in batches[0]
+    print("build_message_batches agrupa mensagens pequenas em 1 lote OK")
+
+
+def test_build_message_batches_splits_when_over_telegram_limit():
+    from telegram_notify import build_message_batches, TELEGRAM_MESSAGE_LIMIT
+
+    big_msg = "x" * (TELEGRAM_MESSAGE_LIMIT - 10)
+    batches = build_message_batches([big_msg, big_msg])
+    assert len(batches) == 2, f"esperado 2 lotes (não cabe tudo em 1 msg), veio {len(batches)}"
+    assert all(len(b) <= TELEGRAM_MESSAGE_LIMIT for b in batches)
+    print("build_message_batches respeita o limite de 4096 caracteres OK")
+
+
+def test_build_message_batches_empty_list_returns_no_batches():
+    from telegram_notify import build_message_batches
+
+    assert build_message_batches([]) == []
+    print("build_message_batches com lista vazia retorna [] OK")
 
 def test_youtube_diff_logic_with_mock_client():
     from sources import youtube
@@ -546,6 +593,7 @@ if __name__ == "__main__":
     test_youtube_no_credentials_returns_empty()
     test_itunes_first_run_no_notification_then_detects_new()
     test_google_news_first_run_no_notification_then_detects_new()
+    test_google_news_ignores_old_reindexed_entry()
     test_telegram_addgroup_command_creates_group()
     test_telegram_removegroup_command_deletes_group()
     test_telegram_listgroups_command_replies_with_groups()
@@ -560,5 +608,8 @@ if __name__ == "__main__":
     test_main_skips_paused_group()
     test_weekly_digest_builds_summary_and_resets()
     test_weekly_digest_skips_send_when_no_counts()
+    test_build_message_batches_groups_small_messages_into_one()
+    test_build_message_batches_splits_when_over_telegram_limit()
+    test_build_message_batches_empty_list_returns_no_batches()
     test_youtube_diff_logic_with_mock_client()
     print("\nTODOS OS TESTES PASSARAM")

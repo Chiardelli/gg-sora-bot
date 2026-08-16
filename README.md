@@ -26,8 +26,10 @@ Um workflow do GitHub Actions roda a cada hora (`.github/workflows/check-updates
 
 1. Lê os grupos configurados em `config/groups.yaml`;
 2. Pra cada grupo, checa cada fonte e compara com o que já foi visto antes (guardado em `state/seen.json`);
-3. Manda uma mensagem no Telegram pra cada novidade encontrada;
+3. Junta todas as novidades encontradas na execução numa única mensagem no Telegram (só quebra em mais de uma se passar do limite de 4096 caracteres da própria API do Telegram), evita flood de uma mensagem por novidade;
 4. Commita `state/seen.json` de volta no repositório, pra lembrar o que já foi notificado da próxima vez.
+
+A fonte de Google News também ignora matérias com mais de `MAX_NEWS_AGE_DAYS` (3 dias, em `src/sources/google_news.py`) de publicação, mesmo que o link nunca tenha sido visto antes, assim evita notificar notícia velha que o Google reindexou com um link novo.
 
 ## Instalação
 

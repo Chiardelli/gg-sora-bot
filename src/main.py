@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from config import load_config
 from state import load_state, save_state
-from telegram_notify import send_telegram_message
+from telegram_notify import send_telegram_message, build_message_batches
 from telegram_commands import process_telegram_commands
 from sources.youtube import check_youtube
 from sources.itunes import check_itunes
@@ -77,10 +77,12 @@ def main():
                     entry["alerted"] = True
 
     print(f"{len(all_messages)} novidade(s) encontrada(s), {len(alerts)} alerta(s).")
-    for message in all_messages:
-        send_telegram_message(message)
-    for alert in alerts:
-        send_telegram_message(alert, parse_mode=None)
+    # agrupa tudo em 1 mensagem por lote (em vez de 1 mensagem por novidade)
+    # pra não floodar o chat
+    for batch in build_message_batches(all_messages):
+        send_telegram_message(batch)
+    for batch in build_message_batches(alerts):
+        send_telegram_message(batch, parse_mode=None)
 
     save_state(state)
 

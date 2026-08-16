@@ -7,6 +7,29 @@ import requests
 
 TELEGRAM_API_BASE = "https://api.telegram.org"
 
+# limite de caracteres por mensagem da própria API do Telegram
+TELEGRAM_MESSAGE_LIMIT = 4096
+
+
+def build_message_batches(messages, separator="\n\n"):
+    """Agrupa uma lista de mensagens em lotes pra mandar o mínimo de
+    mensagens possível (idealmente 1), em vez de uma mensagem por novidade,
+    respeitando o limite de 4096 caracteres do Telegram."""
+    batches = []
+    current = ""
+    for msg in messages:
+        candidate = msg if not current else current + separator + msg
+        if len(candidate) > TELEGRAM_MESSAGE_LIMIT:
+            if current:
+                batches.append(current)
+            # mensagem individual maior que o limite (raro): corta ela mesma
+            current = msg[:TELEGRAM_MESSAGE_LIMIT]
+        else:
+            current = candidate
+    if current:
+        batches.append(current)
+    return batches
+
 
 def send_telegram_message(text, parse_mode="Markdown"):
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
