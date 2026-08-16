@@ -41,3 +41,9 @@ groups:
   itunes_artist_ids:
   - '1635469693'
   google_news_query: New Jeans kpop
+- name: ILLIT
+  youtube_channel_ids:
+  - UCEpFoWeCMCo5z3EvWaz6hQQ
+  itunes_artist_ids:
+  - '1734551937'
+  google_news_query: ILLIT kpop
