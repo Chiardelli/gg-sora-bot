@@ -109,6 +109,11 @@
       "group": "TWICE",
       "text": "*TWICE* na mídia (tradução automática):\n【Hallyu】TWICE Chaeyoung não renova contrato com a JYP, mas continuará atividades com o grupo (Nikkan Sports) - Yahoo! News\nhttps://news.google.com/rss/articles/CBMif0FVX3lxTE1KeWhrd01fT3IwbEttUFpHOUtpeldQa24tcnMzc293UElOQm5XTkZOdjNsY0tHRldaSWNWck52c3l1TjFibExkbWEtZnNMMFl3cERqb2F5b0g4M2lseldhZ2NHZ1JjNFA3VEVXdy1LbTdoQTI2UmdNbm5sSXIyaGM?oc=5",
       "ts": 1786912723.4583802
+    },
+    {
+      "group": "aespa",
+      "text": "*aespa* na mídia (tradução automática):\nStray Kids e aespa lideram a primeira semana de agosto no Hanteo Chart global - Beyond Post\nhttps://news.google.com/rss/articles/CBMifEFVX3lxTE5SREVtX29TUjBQdmdfNjlpNXJhcFVpelYtTmlyQ0swUGVTcUV3VkxtS191SUdmMVRtTlhISWF4UXNjc01obmJCZEVqeEpmY3g5UnJFRF9VbG9uamJqdWZVdjZad2JUYVNxNGxVZ2lhR3k2eFp6QzZraEVodHc?oc=5",
+      "ts": 1786912990.3288443
     }
   ],
   "ai_cache": {
@@ -128,6 +133,16 @@
     },
     "5558284b3fdfcb1bb240b38a": {
       "ts": 1786912713.3052564,
+      "value": [
+        0
+      ]
+    },
+    "70e7805aa18f94a2ffdcfa49": {
+      "ts": 1786912990.3288028,
+      "value": "Stray Kids e aespa lideram a primeira semana de agosto no Hanteo Chart global - Beyond Post"
+    },
+    "f2a820289431d6a535154048": {
+      "ts": 1786912989.6737556,
       "value": [
         0
       ]
@@ -294,6 +309,7 @@
     ],
     "YENA": [],
     "aespa": [
+      "https://news.google.com/rss/articles/CBMifEFVX3lxTE5SREVtX29TUjBQdmdfNjlpNXJhcFVpelYtTmlyQ0swUGVTcUV3VkxtS191SUdmMVRtTlhISWF4UXNjc01obmJCZEVqeEpmY3g5UnJFRF9VbG9uamJqdWZVdjZad2JUYVNxNGxVZ2lhR3k2eFp6QzZraEVodHc?oc=5",
       "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBNQkd1VDNlRjFETTZfeGFsWUcwM0dGRlJNX0tsZXpYNklaU3o0RFhsa01KRXp3anhjd3dYM3NEa2ZkYnFTVkxXcFRRRUJUR0tuVXc3MUNOTFI4UGdXRWpMTWZ2Tmg?oc=5",
       "https://news.google.com/rss/articles/CBMilgFBVV95cUxPU1NmN2hjZnFzLWEtQkRwaktkMUpqSko3Z0pXdlhaQ3hWMVlQcjdBRVFQbjByU25FWHZYUlo4dlZJR1k5QlUtMVVlQnppWm85aE94dktGOE5yRFVLU1hLVC16TGpuREdtd0J0eXIweHpVNDhhZnhMbGU2LUNmRnFadjQtLVRocUM5VjhLdVpzOUNBUG5keEE?oc=5",
       "https://news.google.com/rss/articles/CBMiakFVX3lxTFAwWW4xLTlDNW9zdkQyWFhTV1JTRkZva2Izal9CNE5zbVNWTmxSNDE2QXlDdUhCMjRTTXhPd1k3LVd5eFl2cHJnaGZzVEtndjZlNWZzNnpDLWlqRlZWR3hkc2NtazUtMXR6U0E?oc=5",
@@ -525,7 +541,7 @@
       "check_google_news": 17
     },
     "aespa": {
-      "check_google_news": 2
+      "check_google_news": 3
     },
     "le sserafim": {
       "check_google_news": 1
